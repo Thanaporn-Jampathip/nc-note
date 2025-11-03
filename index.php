@@ -152,7 +152,7 @@ $persentageDg = round(($sentDg / $dg) * 100) ?? 0;
 // FOR SEARCH (BRANCH)
 $sqlSearch = "SELECT * FROM branch";
 $querySearch = mysqli_query($conn, $sqlSearch);
-// -----------------------------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------------------------
 $termSelect = date('n');
 if ($termSelect >= 5 && $termSelect <= 9) {
     $termSelect = 1;
