@@ -30,8 +30,8 @@ if(isset($_POST['edit'])){
             Swal.fire({
             title: "แก้ไขสำเร็จ",
             icon: "success",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1700,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="../branch.php";
             })
@@ -41,8 +41,8 @@ if(isset($_POST['edit'])){
             Swal.fire({
             title: "แก้ไขไม่สำเร็จ",
             icon: "error",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1700,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="../branch.php";
             })

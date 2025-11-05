@@ -218,7 +218,8 @@ if (isset($_SESSION['user']['username'], $_SESSION['user']['password'])) {
                     Swal.fire({
                         title: "เพิ่มสำเร็จ",
                         icon: "success",
-                        confirmButtonText: "ปิด",
+                        timer: 1000,
+                        didOpen: () => Swal.showLoading()
                     }).then(() => {
                         $('#addBranchModal').modal('hide');
                         location.reload();
@@ -271,8 +272,8 @@ if (isset($_POST['delete'])) {
             Swal.fire({
                 title: "ลบสำเร็จ",
                 icon: "success",
-                confirmButtonText: "ปิด",
-                draggable: true
+                timer: 1000,
+                didOpen: () => Swal.showLoading()
             }).then(() => { window.location.href="branch.php"; });
         </script>';
     } else {
@@ -280,8 +281,8 @@ if (isset($_POST['delete'])) {
             Swal.fire({
                 title: "ลบไม่สำเร็จ",
                 icon: "error",
-                confirmButtonText: "ปิด",
-                draggable: true
+                timer: 1000,
+                didOpen: () => Swal.showLoading()
             }).then(() => { window.location.href="branch.php"; });
         </script>';
     }
