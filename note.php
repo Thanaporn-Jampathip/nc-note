@@ -614,9 +614,6 @@ if($usertype === 'user'){
                                                         <label for="">ขาดเรียนกี่คน</label>
                                                         <input type="int" value="<?php echo $rowN['miss'] ?>" name="miss" class="form-control">
                                                     </div>
-                                                    <div>
-                                                        
-                                                    </div>
                                                     <div class="col">
                                                         <label for="">ทั้งหมดกี่คน</label>
                                                         <input type="int" value="<?php echo $rowN['all_student'] ?>" name="allStudentEdit" class="form-control">
@@ -655,14 +652,10 @@ if($usertype === 'user'){
                                                 </div>
                                             </div>
                                             <!-- ถ้ามีชื่อนักเรียนขาด -->
-                                            <?php
-                                            if(!empty($rowN['missStudentName'])){
-                                            ?>
                                             <div class="mb-3">
                                                 <label for="">รายชื่อนักเรียนที่ขาดเรียน<br><span style="font-size: 14px; color: gray;">(หากเผลอใส่ในวันที่มาเรียนครบ กรอกคำว่า <span style="color: red;">"ไม่มี"</span> )</span></label>
                                                 <input type="int" value="<?php echo $rowN['missStudentName'] ?>" name="missStudentName" class="form-control">
                                             </div>
-                                            <?php } ?>
 
                                             <!-- ถ้ามีการสอนแทน -->
                                             <?php
