@@ -469,8 +469,8 @@ if($usertype === 'user'){
             <!-- DATA -->
             <br>
         <div class="table-responsive" >
-            <h6 class="text-center">รายการบันทึก วันที่ <?php echo convertToThaiDate(date('Y-m-d')); ?></h6>
-            <br>
+            <h5 class="text-center">รายการบันทึก</h5>
+            <p class="text-center"><st>วันที่ <?php echo convertToThaiDate(date('Y-m-d')); ?></p>
             <table class="table table-bordered table-sm">
                 <tr class=" table table-info">
                     <th>ชื่อบัญชีห้อง</th>
@@ -481,7 +481,7 @@ if($usertype === 'user'){
                     <th class="text-danger">รายชื่อขาดเรียน</th>
                     <th class="text-success">มาทั้งหมด</th>
                     <th>ครูผู้สอน</th>
-                    <th>เวลาบันทึก</th>
+                    <th>วันที่บันทึก</th>
                     <th>สัปดาห์</th>
                     <th class="text-danger">หมายเหตุ</th>
                     <th>ภาคเรียนที่</th>
