@@ -519,7 +519,7 @@ if($usertype === 'user'){
                             echo $rowN['insteadTeacherName'];
                         }
                         ?></td>
-                        <td><?php echo $rowN['term']?></td>
+                        <td><?php echo $rowN['term'] . " / " . Years($year)?></td>
                         <td class="buttonInTable d-flex justify-content-around ">
                             <div class="">
                                 <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editNoteUserModal<?php echo $rowN['id'] ?>">แก้ไข</button>
