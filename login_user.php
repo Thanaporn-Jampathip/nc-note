@@ -82,7 +82,6 @@ if(isset($_POST['login_user'])){
             Swal.fire({
                 title: "เข้าสู่ระบบสำเร็จ",
                 icon: "success",
-                confirmButtonText: "ปิด",
                 timer: 1000,
                 didOpen: () => Swal.showLoading()
             }).then(() => {
@@ -94,7 +93,6 @@ if(isset($_POST['login_user'])){
             Swal.fire({
                 title: "ชื่อผู้ใช้หรือรหัสผ่านไม่ถูกต้อง",
                 icon: "error",
-                confirmButtonText: "ปิด",
                 timer: 1000,
                 didOpen: () => Swal.showLoading()
             }).then(() => {
