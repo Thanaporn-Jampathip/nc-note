@@ -614,6 +614,9 @@ if($usertype === 'user'){
                                                         <label for="">ขาดเรียนกี่คน</label>
                                                         <input type="int" value="<?php echo $rowN['miss'] ?>" name="miss" class="form-control">
                                                     </div>
+                                                    <div>
+                                                        
+                                                    </div>
                                                     <div class="col">
                                                         <label for="">ทั้งหมดกี่คน</label>
                                                         <input type="int" value="<?php echo $rowN['all_student'] ?>" name="allStudentEdit" class="form-control">
@@ -624,10 +627,7 @@ if($usertype === 'user'){
                                                 <div class="row">
                                                     <div class="col">
                                                         <label for="">ภาคเรียนที่</label>
-                                                        <select name="term" id="" class="form-select">
-                                                            <option value="1" <?php if($rowN['term'] == '1') echo 'selected' ?>>1</option>
-                                                            <option value="2" <?php if($rowN['term'] == '2') echo 'selected' ?>>2</option>
-                                                        </select>
+                                                        <input type="text" name="term" class="form-control" readonly value="<?php echo $term . " / " . Years($year) ?>">
                                                     </div>
                                                     <div class="col">
                                                         <label for="">สัปดาห์</label>
