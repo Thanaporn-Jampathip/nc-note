@@ -737,6 +737,8 @@ if($usertype === 'user'){
         });
     };
 
+
+    // insert note
     $(document).on("submit", '#insertNoteForm', function(e){
     e.preventDefault();
     let userID = $('#userID').val();
@@ -786,13 +788,14 @@ if($usertype === 'user'){
             contentType: false,
             processData: false,
             dataType: "json",
+            // Check Password Teacher
             success: function(alertS){
                 if(alertS.status === 'ไม่มีครูคนไหนใช้รหัสนี้'){
                     Swal.fire({
                     title: "ไม่มีครูคนไหนใช้รหัสนี้",
                     icon: "error",
-                    confirmButtonText: "ปิด",
-                    draggable: true
+                    timer: 1500,
+                    didOpen: () => Swal.showLoading()
                     }).then(() =>{
                         $('#saveFormModal').modal('hide');
                         location.reload();
@@ -801,8 +804,8 @@ if($usertype === 'user'){
                         Swal.fire({
                         title: "เพิ่มสำเร็จ",
                         icon: "success",
-                        confirmButtonText: "ปิด",
-                        draggable: true
+                        timer: 1500,
+                        didOpen: () => Swal.showLoading()
                         }).then(() =>{
                             $('#saveFormModal').modal('hide');
                             location.reload();
@@ -871,8 +874,8 @@ if(isset($_POST['delete'])) {
             Swal.fire({
             title: "ลบสำเร็จ",
             icon: "success",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1000,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="note.php";
             })
