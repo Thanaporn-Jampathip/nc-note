@@ -280,7 +280,7 @@ if($usertype === 'user'){
     </div>
 <?php }elseif ($usertype == 'user'){ ?>
     <!-- USER PAGE -->
-    <dive class="container m-2 p-4 border rounded-3"style="height: auto;">
+    <div class="container m-2 p-4 border rounded-3"style="height: auto;">
             <h5>บันทึกการเรียน / การสอน</h5>
             <hr>
             <div class="d-flex justify-content-between">
@@ -288,7 +288,6 @@ if($usertype === 'user'){
                 ภาคเรียนที่ <?php echo $term ?> ปีการศึกษา <?php echo Years($year); ?></p>
 
                 <div class="d-flex align-items-start">
-
                     <!-- BUTTON ADD -->
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#saveFormModal">บันทึก</button>                
                 </div>
@@ -468,244 +467,243 @@ if($usertype === 'user'){
             </div>
             
             <!-- DATA -->
-            <h6 class="text-center">รายการบันทึก</h6><br>
-
-            <div class="table-responsive" >
-                <table class="table table-bordered table-sm">
-                    <tr class=" table table-info">
-                        <th>ชื่อบัญชีห้อง</th>
-                        <th>รหัสวิชา</th>
-                        <th>ชื่อวิชา</th>
-                        <th>เริ่มคาบ-สุดคาบ</th>
-                        <th class="text-danger">ขาดเรียนกี่คน</th>
-                        <th class="text-danger">รายชื่อขาดเรียน</th>
-                        <th class="text-success">มาทั้งหมด</th>
-                        <th>ครูผู้สอน</th>
-                        <th>เวลาบันทึก</th>
-                        <th>สัปดาห์</th>
-                        <th class="text-danger">หมายเหตุ</th>
-                        <th>ภาคเรียนที่</th>
-                        <th></th>
-                    </tr>
-                    <?php  
-                        $sql = "SELECT name,lastname,id FROM teacher";
-                        $query = mysqli_query($conn, $sql);
-                        $row = mysqli_fetch_assoc($query);
-                        while($rowN = mysqli_fetch_array($queryN)){
-                            $missStudent = $rowN['miss'];
-                            $allStudent = $rowN['all_student'];
-                            $studentCome = $allStudent - $missStudent;
-                        ?>
-                    <tr>
-                        <td><?php echo $rowN['username'] ?></td>
-                        <td><?php echo $rowN['subjectID'] ?></td>
-                        <td><?php echo $rowN['subjectName'] ?></td>
-                        <td><?php echo $rowN['begin_period'] . ' - ' . $rowN['end_period'] ?></td>
-                        <td><?php echo $rowN['miss'] ?></td>
-                        <td><?php echo nl2br($rowN['missStudentName']) ?></td>
-                        <td><?php echo $studentCome ?></td>
-                        <td><?php echo $rowN['teacherName'] ?></td>
-                        <td><?php echo convertToThaiDate($rowN['date']); ?></td>
-                        <td><?php echo $rowN['week'] ?></td>
-                        <td><?php 
-                        if($rowN['note'] === 'เข้าสอนปกติ'){
-                            echo '<span class="text-success">เข้าสอนปกติ</span>';
-                        }elseif($rowN['note'] == 'สอนแทน'){
-                            echo '<span class="text-warning">ครูสอนแทน</span>';
-                        }
-                        ?><br>
-                        <?php
-                        if($rowN['note'] === 'สอนแทน' && !empty($rowN['insteadTeacherName'])) {
-                            echo $rowN['insteadTeacherName'];
-                        }
-                        ?></td>
-                        <td><?php echo $rowN['term'] . " / " . Years($year)?></td>
-                        <td class="buttonInTable d-flex justify-content-around ">
-                            <div class="">
-                                <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editNoteUserModal<?php echo $rowN['id'] ?>">แก้ไข</button>
-                            </div>
-                            <!-- EDIT MODAL -->
-                            <div class="modal fade" id="editNoteUserModal<?php echo $rowN['id'] ?>" tabindex="-1" aria-labelledby="addFormLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <!-- FORM EDIT -->
-                                    <form action="./backend/editNote.php" method="post" id="editNoteForm">
-                                        <div class="modal-header d-flex">
-                                            <div>
-                                                <h5 class="modal-title" id="editFormModal">แก้ไขบันทึก</h5>
-                                            </div>
-                                            <div class="ms-auto pe-2">
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <br>
+        <div class="table-responsive" >
+            <h6 class="text-center">รายการบันทึก วันที่ <?php echo convertToThaiDate(date('Y-m-d')); ?></h6>
+            <br>
+            <table class="table table-bordered table-sm">
+                <tr class=" table table-info">
+                    <th>ชื่อบัญชีห้อง</th>
+                    <th>รหัสวิชา</th>
+                    <th>ชื่อวิชา</th>
+                    <th>เริ่มคาบ-สุดคาบ</th>
+                    <th class="text-danger">ขาดเรียนกี่คน</th>
+                    <th class="text-danger">รายชื่อขาดเรียน</th>
+                    <th class="text-success">มาทั้งหมด</th>
+                    <th>ครูผู้สอน</th>
+                    <th>เวลาบันทึก</th>
+                    <th>สัปดาห์</th>
+                    <th class="text-danger">หมายเหตุ</th>
+                    <th>ภาคเรียนที่</th>
+                    <th></th>
+                </tr>
+                <?php  
+                    $sql = "SELECT name,lastname,id FROM teacher";
+                    $query = mysqli_query($conn, $sql);
+                    $row = mysqli_fetch_assoc($query);
+                    while($rowN = mysqli_fetch_array($queryN)){
+                        $missStudent = $rowN['miss'];
+                        $allStudent = $rowN['all_student'];
+                        $studentCome = $allStudent - $missStudent;
+                    ?>
+                <tr>
+                    <td><?php echo $rowN['username'] ?></td>
+                    <td><?php echo $rowN['subjectID'] ?></td>
+                    <td><?php echo $rowN['subjectName'] ?></td>
+                    <td><?php echo $rowN['begin_period'] . ' - ' . $rowN['end_period'] ?></td>
+                    <td><?php echo $rowN['miss'] ?></td>
+                    <td><?php echo nl2br($rowN['missStudentName']) ?></td>
+                    <td><?php echo $studentCome ?></td>
+                    <td><?php echo $rowN['teacherName'] ?></td>
+                    <td><?php echo convertToThaiDate($rowN['date']); ?></td>
+                    <td><?php echo $rowN['week'] ?></td>
+                    <td><?php 
+                    if($rowN['note'] === 'เข้าสอนปกติ'){
+                        echo '<span class="text-success">เข้าสอนปกติ</span>';
+                    }elseif($rowN['note'] == 'สอนแทน'){
+                        echo '<span class="text-warning">ครูสอนแทน</span>';
+                    }
+                    ?><br>
+                    <?php
+                    if($rowN['note'] === 'สอนแทน' && !empty($rowN['insteadTeacherName'])) {
+                        echo $rowN['insteadTeacherName'];
+                    }
+                    ?></td>
+                    <td><?php echo $rowN['term'] . " / " . Years($year)?></td>
+                    <td class="buttonInTable d-flex justify-content-around ">
+                        <div class="">
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editNoteUserModal<?php echo $rowN['id'] ?>">แก้ไข</button>
+                        </div>
+                        <!-- EDIT MODAL -->
+                        <div class="modal fade" id="editNoteUserModal<?php echo $rowN['id'] ?>" tabindex="-1" aria-labelledby="addFormLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <!-- FORM EDIT -->
+                                <form action="./backend/editNote.php" method="post" id="editNoteForm">
+                                    <div class="modal-header d-flex">
+                                        <div>
+                                            <h5 class="modal-title" id="editFormModal">แก้ไขบันทึก</h5>
+                                        </div>
+                                        <div class="ms-auto pe-2">
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="modal-body">
+                                        <input type="hidden" value="<?php echo $rowN['id'] ?>" name="recordID" id="recordID">
+                                        <input type="hidden" value="<?php echo $rowN['userID'] ?>" id="userID">
+                                    <div class="row">
+                                        <div class="col-4">
+                                            <div class="mb-3">
+                                                <label for="">รหัสวิชา</label>
+                                                <select name="editSubID" id="editSubID" class="form-control">
+                                                    <?php 
+                                                    $sql = "SELECT id,subID FROM subject WHERE userID = $userid";
+                                                    $query = mysqli_query($conn, $sql);
+                                                    while($rowSubID = mysqli_fetch_assoc($query)){ ?>
+                                                        <option value="<?php echo $rowSubID['id'] ?>"<?php if($rowN['subjectID'] == $rowSubID['subID']) echo ' selected'; ?>>
+                                                            <?php echo $rowSubID['subID']; ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                </select>
                                             </div>
                                         </div>
-                                        
-                                        <div class="modal-body">
-                                            <input type="hidden" value="<?php echo $rowN['id'] ?>" name="recordID" id="recordID">
-                                            <input type="hidden" value="<?php echo $rowN['userID'] ?>" id="userID">
+                                        <div class="col">
+                                            <div class="mb-3">
+                                                <label for="">ชื่อรายวิชา</label>
+                                                <select name="editSubName" id="editSubName" class="form-control">
+                                                    <?php 
+                                                    $sql = "SELECT name FROM subject WHERE userID = $userid";
+                                                    $query = mysqli_query($conn, $sql);
+                                                    while($rowSubName = mysqli_fetch_assoc($query)){?>
+                                                        <option value="<?php echo $rowSubName['name'] ?>"<?php if($rowN['subjectName'] == $rowSubName['name']) echo 'selected'; ?>><?php echo $rowSubName['name'] ?></option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        <div class="mb-3">
+                                            <div class="row">
+                                                <div class="col-2">
+                                                    <label for="">เริ่มคาบ</label>
+                                                    <select name="editStartID" id="editStartID" class="form-control">
+                                                        <option value="1"<?php if($rowN['begin_period'] == '1') echo 'selected'; ?>>1</option>
+                                                        <option value="2"<?php if($rowN['begin_period'] == '2') echo 'selected'; ?>>2</option>
+                                                        <option value="3"<?php if($rowN['begin_period'] == '3') echo 'selected'; ?>>3</option>
+                                                        <option value="4"<?php if($rowN['begin_period'] == '4') echo 'selected'; ?>>4</option>
+                                                        <option value="5"<?php if($rowN['begin_period'] == '5') echo 'selected'; ?>>5</option>
+                                                        <option value="6"<?php if($rowN['begin_period'] == '6') echo 'selected'; ?>>6</option>
+                                                        <option value="7"<?php if($rowN['begin_period'] == '7') echo 'selected'; ?>>7</option>
+                                                        <option value="8"<?php if($rowN['begin_period'] == '8') echo 'selected'; ?>>8</option>
+                                                        <option value="9"<?php if($rowN['begin_period'] == '9') echo 'selected'; ?>>9</option>
+                                                        <option value="10"<?php if($rowN['begin_period'] == '10') echo 'selected'; ?>>10</option>
+                                                        <option value="11"<?php if($rowN['begin_period'] == '11') echo 'selected'; ?>>11</option>
+                                                        <option value="12"<?php if($rowN['begin_period'] == '12') echo 'selected'; ?>>12</option>
+                                                        <option value="13"<?php if($rowN['begin_period'] == '13') echo 'selected'; ?>>13</option>
+                                                    </select>
+                                                </div>  
+                                                <div class="col-2">
+                                                    <label for="">สุดคาบ</label>
+                                                    <select name="editEndID" id="editEndID" class="form-control">
+                                                        <option value="1"<?php if($rowN['end_period'] == '1') echo 'selected'; ?>>1</option>
+                                                        <option value="2"<?php if($rowN['end_period'] == '2') echo 'selected'; ?>>2</option>
+                                                        <option value="3"<?php if($rowN['end_period'] == '3') echo 'selected'; ?>>3</option>
+                                                        <option value="4"<?php if($rowN['end_period'] == '4') echo 'selected'; ?>>4</option>
+                                                        <option value="5"<?php if($rowN['end_period'] == '5') echo 'selected'; ?>>5</option>
+                                                        <option value="6"<?php if($rowN['end_period'] == '6') echo 'selected'; ?>>6</option>
+                                                        <option value="7"<?php if($rowN['end_period'] == '7') echo 'selected'; ?>>7</option>
+                                                        <option value="8"<?php if($rowN['end_period'] == '8') echo 'selected'; ?>>8</option>
+                                                        <option value="9"<?php if($rowN['end_period'] == '9') echo 'selected'; ?>>9</option>
+                                                        <option value="10"<?php if($rowN['end_period'] == '10') echo 'selected'; ?>>10</option>
+                                                        <option value="11"<?php if($rowN['end_period'] == '11') echo 'selected'; ?>>11</option>
+                                                        <option value="12"<?php if($rowN['end_period'] == '12') echo 'selected'; ?>>12</option>
+                                                        <option value="13"<?php if($rowN['end_period'] == '13') echo 'selected'; ?>>13</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col">
+                                                    <label for="">ขาดเรียนกี่คน</label>
+                                                    <input type="int" value="<?php echo $rowN['miss'] ?>" name="miss" class="form-control">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="">ทั้งหมดกี่คน</label>
+                                                    <input type="int" value="<?php echo $rowN['all_student'] ?>" name="allStudentEdit" class="form-control">
+                                                </div>
+                                            </div>        
+                                        </div>
+                                        <div class="mb-3">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <label for="">ภาคเรียนที่</label>
+                                                    <input type="text" name="term" class="form-control" readonly value="<?php echo $term . " / " . Years($year) ?>">
+                                                </div>
+                                                <div class="col">
+                                                    <label for="">สัปดาห์</label>
+                                                    <select name="weeks" id="weeks" class="form-control">
+                                                        <option value="1"<?php if($rowN['week'] == '1') echo 'selected' ?>>1</option>
+                                                        <option value="2" <?php if($rowN['week'] == '2') echo 'selected' ?>>2</option>
+                                                        <option value="3" <?php if($rowN['week'] == '3') echo 'selected' ?>>3</option>
+                                                        <option value="4" <?php if($rowN['week'] == '4') echo 'selected' ?>>4</option>
+                                                        <option value="5" <?php if($rowN['week'] == '5') echo 'selected' ?>>5</option>
+                                                        <option value="6" <?php if($rowN['week'] == '6') echo 'selected' ?>>6</option>
+                                                        <option value="7" <?php if($rowN['week'] == '7') echo 'selected' ?>>7</option>
+                                                        <option value="8" <?php if($rowN['week'] == '8') echo 'selected' ?>>8</option>
+                                                        <option value="9" <?php if($rowN['week'] == '9') echo 'selected' ?>>9</option>
+                                                        <option value="10" <?php if($rowN['week'] == '10') echo 'selected' ?>>10</option>
+                                                        <option value="11" <?php if($rowN['week'] == '11') echo 'selected' ?>>11</option>
+                                                        <option value="12" <?php if($rowN['week'] == '12') echo 'selected' ?>>12</option>
+                                                        <option value="13" <?php if($rowN['week'] == '13') echo 'selected' ?>>13</option>
+                                                        <option value="14" <?php if($rowN['week'] == '14') echo 'selected' ?>>14</option>
+                                                        <option value="15" <?php if($rowN['week'] == '15') echo 'selected' ?>>15</option>
+                                                        <option value="16" <?php if($rowN['week'] == '16') echo 'selected' ?>>16</option>
+                                                        <option value="17" <?php if($rowN['week'] == '17') echo 'selected' ?>>17</option>
+                                                        <option value="18" <?php if($rowN['week'] == '18') echo 'selected' ?>>18</option>
+                                                    </select>
+                                                </div>                                                    
+                                            </div>
+                                        </div>
+                                        <!-- ถ้ามีชื่อนักเรียนขาด -->
+                                        <div class="mb-3">
+                                            <label for="">รายชื่อนักเรียนที่ขาดเรียน<br><span style="font-size: 14px; color: gray;">(หากเผลอใส่ในวันที่มาเรียนครบ กรอกคำว่า <span style="color: red;">"ไม่มี"</span> )</span></label>
+                                            <input type="int" value="<?php echo $rowN['missStudentName'] ?>" name="missStudentName" class="form-control">
+                                        </div>
+                                        <!-- ถ้ามีการสอนแทน -->
+                                        <?php
+                                        if($rowN['note'] == 'สอนแทน'){
+                                        ?>
+                                        <h5 class="text-danger">แก้ไขรายชื่อครูสอนแทน</h5>
                                         <div class="row">
-                                            <div class="col-4">
+                                            <div class="col">
                                                 <div class="mb-3">
-                                                    <label for="">รหัสวิชา</label>
-                                                    <select name="editSubID" id="editSubID" class="form-control">
-                                                        <?php 
-                                                        $sql = "SELECT id,subID FROM subject WHERE userID = $userid";
-                                                        $query = mysqli_query($conn, $sql);
-                                                        while($rowSubID = mysqli_fetch_assoc($query)){ ?>
-                                                            <option value="<?php echo $rowSubID['id'] ?>"<?php if($rowN['subjectID'] == $rowSubID['subID']) echo ' selected'; ?>>
-                                                                <?php echo $rowSubID['subID']; ?>
-                                                            </option>
+                                                    <label for="">สาขา</label>
+                                                    <select id="branchEdit" class="form-select branchEdit">
+                                                        <?php
+                                                            $sql = "SELECT id,name FROM branch";
+                                                            $query = mysqli_query($conn,$sql);
+                                                            while($row = mysqli_fetch_array($query)){
+                                                        ?>
+                                                            <option value="<?php echo $row['id'] ?>"><?php echo $row['name'] ?></option>
                                                         <?php } ?>
                                                     </select>
                                                 </div>
                                             </div>
                                             <div class="col">
                                                 <div class="mb-3">
-                                                    <label for="">ชื่อรายวิชา</label>
-                                                    <select name="editSubName" id="editSubName" class="form-control">
-                                                        <?php 
-                                                        $sql = "SELECT name FROM subject WHERE userID = $userid";
-                                                        $query = mysqli_query($conn, $sql);
-                                                        while($rowSubName = mysqli_fetch_assoc($query)){?>
-                                                            <option value="<?php echo $rowSubName['name'] ?>"<?php if($rowN['subjectName'] == $rowSubName['name']) echo 'selected'; ?>><?php echo $rowSubName['name'] ?></option>
-                                                        <?php } ?>
+                                                    <label for="">ครูสอนแทน</label>
+                                                    <select name="insteadTeacher" id="teacherEdit" class="form-select teacherEdit">
+                                                        
                                                     </select>
                                                 </div>
-                                            </div>
+                                            </div>  
                                         </div>
-                                            <div class="mb-3">
-                                                <div class="row">
-                                                    <div class="col-2">
-                                                        <label for="">เริ่มคาบ</label>
-                                                        <select name="editStartID" id="editStartID" class="form-control">
-                                                            <option value="1"<?php if($rowN['begin_period'] == '1') echo 'selected'; ?>>1</option>
-                                                            <option value="2"<?php if($rowN['begin_period'] == '2') echo 'selected'; ?>>2</option>
-                                                            <option value="3"<?php if($rowN['begin_period'] == '3') echo 'selected'; ?>>3</option>
-                                                            <option value="4"<?php if($rowN['begin_period'] == '4') echo 'selected'; ?>>4</option>
-                                                            <option value="5"<?php if($rowN['begin_period'] == '5') echo 'selected'; ?>>5</option>
-                                                            <option value="6"<?php if($rowN['begin_period'] == '6') echo 'selected'; ?>>6</option>
-                                                            <option value="7"<?php if($rowN['begin_period'] == '7') echo 'selected'; ?>>7</option>
-                                                            <option value="8"<?php if($rowN['begin_period'] == '8') echo 'selected'; ?>>8</option>
-                                                            <option value="9"<?php if($rowN['begin_period'] == '9') echo 'selected'; ?>>9</option>
-                                                            <option value="10"<?php if($rowN['begin_period'] == '10') echo 'selected'; ?>>10</option>
-                                                            <option value="11"<?php if($rowN['begin_period'] == '11') echo 'selected'; ?>>11</option>
-                                                            <option value="12"<?php if($rowN['begin_period'] == '12') echo 'selected'; ?>>12</option>
-                                                            <option value="13"<?php if($rowN['begin_period'] == '13') echo 'selected'; ?>>13</option>
-                                                        </select>
-                                                    </div>  
-                                                    <div class="col-2">
-                                                        <label for="">สุดคาบ</label>
-                                                        <select name="editEndID" id="editEndID" class="form-control">
-                                                            <option value="1"<?php if($rowN['end_period'] == '1') echo 'selected'; ?>>1</option>
-                                                            <option value="2"<?php if($rowN['end_period'] == '2') echo 'selected'; ?>>2</option>
-                                                            <option value="3"<?php if($rowN['end_period'] == '3') echo 'selected'; ?>>3</option>
-                                                            <option value="4"<?php if($rowN['end_period'] == '4') echo 'selected'; ?>>4</option>
-                                                            <option value="5"<?php if($rowN['end_period'] == '5') echo 'selected'; ?>>5</option>
-                                                            <option value="6"<?php if($rowN['end_period'] == '6') echo 'selected'; ?>>6</option>
-                                                            <option value="7"<?php if($rowN['end_period'] == '7') echo 'selected'; ?>>7</option>
-                                                            <option value="8"<?php if($rowN['end_period'] == '8') echo 'selected'; ?>>8</option>
-                                                            <option value="9"<?php if($rowN['end_period'] == '9') echo 'selected'; ?>>9</option>
-                                                            <option value="10"<?php if($rowN['end_period'] == '10') echo 'selected'; ?>>10</option>
-                                                            <option value="11"<?php if($rowN['end_period'] == '11') echo 'selected'; ?>>11</option>
-                                                            <option value="12"<?php if($rowN['end_period'] == '12') echo 'selected'; ?>>12</option>
-                                                            <option value="13"<?php if($rowN['end_period'] == '13') echo 'selected'; ?>>13</option>
-                                                        </select>
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="">ขาดเรียนกี่คน</label>
-                                                        <input type="int" value="<?php echo $rowN['miss'] ?>" name="miss" class="form-control">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="">ทั้งหมดกี่คน</label>
-                                                        <input type="int" value="<?php echo $rowN['all_student'] ?>" name="allStudentEdit" class="form-control">
-                                                    </div>
-                                                </div>        
-                                            </div>
-                                            <div class="mb-3">
-                                                <div class="row">
-                                                    <div class="col">
-                                                        <label for="">ภาคเรียนที่</label>
-                                                        <input type="text" name="term" class="form-control" readonly value="<?php echo $term . " / " . Years($year) ?>">
-                                                    </div>
-                                                    <div class="col">
-                                                        <label for="">สัปดาห์</label>
-                                                        <select name="weeks" id="weeks" class="form-control">
-                                                            <option value="1"<?php if($rowN['week'] == '1') echo 'selected' ?>>1</option>
-                                                            <option value="2" <?php if($rowN['week'] == '2') echo 'selected' ?>>2</option>
-                                                            <option value="3" <?php if($rowN['week'] == '3') echo 'selected' ?>>3</option>
-                                                            <option value="4" <?php if($rowN['week'] == '4') echo 'selected' ?>>4</option>
-                                                            <option value="5" <?php if($rowN['week'] == '5') echo 'selected' ?>>5</option>
-                                                            <option value="6" <?php if($rowN['week'] == '6') echo 'selected' ?>>6</option>
-                                                            <option value="7" <?php if($rowN['week'] == '7') echo 'selected' ?>>7</option>
-                                                            <option value="8" <?php if($rowN['week'] == '8') echo 'selected' ?>>8</option>
-                                                            <option value="9" <?php if($rowN['week'] == '9') echo 'selected' ?>>9</option>
-                                                            <option value="10" <?php if($rowN['week'] == '10') echo 'selected' ?>>10</option>
-                                                            <option value="11" <?php if($rowN['week'] == '11') echo 'selected' ?>>11</option>
-                                                            <option value="12" <?php if($rowN['week'] == '12') echo 'selected' ?>>12</option>
-                                                            <option value="13" <?php if($rowN['week'] == '13') echo 'selected' ?>>13</option>
-                                                            <option value="14" <?php if($rowN['week'] == '14') echo 'selected' ?>>14</option>
-                                                            <option value="15" <?php if($rowN['week'] == '15') echo 'selected' ?>>15</option>
-                                                            <option value="16" <?php if($rowN['week'] == '16') echo 'selected' ?>>16</option>
-                                                            <option value="17" <?php if($rowN['week'] == '17') echo 'selected' ?>>17</option>
-                                                            <option value="18" <?php if($rowN['week'] == '18') echo 'selected' ?>>18</option>
-                                                        </select>
-                                                    </div>                                                    
-                                                </div>
-                                            </div>
-                                            <!-- ถ้ามีชื่อนักเรียนขาด -->
-                                            <div class="mb-3">
-                                                <label for="">รายชื่อนักเรียนที่ขาดเรียน<br><span style="font-size: 14px; color: gray;">(หากเผลอใส่ในวันที่มาเรียนครบ กรอกคำว่า <span style="color: red;">"ไม่มี"</span> )</span></label>
-                                                <input type="int" value="<?php echo $rowN['missStudentName'] ?>" name="missStudentName" class="form-control">
-                                            </div>
-
-                                            <!-- ถ้ามีการสอนแทน -->
-                                            <?php
-                                            if($rowN['note'] == 'สอนแทน'){
-                                            ?>
-                                            <h5 class="text-danger">แก้ไขรายชื่อครูสอนแทน</h5>
-                                            <div class="row">
-                                                <div class="col">
-                                                    <div class="mb-3">
-                                                        <label for="">สาขา</label>
-                                                        <select id="branchEdit" class="form-select branchEdit">
-                                                            <?php
-                                                                $sql = "SELECT id,name FROM branch";
-                                                                $query = mysqli_query($conn,$sql);
-                                                                while($row = mysqli_fetch_array($query)){
-                                                            ?>
-                                                                <option value="<?php echo $row['id'] ?>"><?php echo $row['name'] ?></option>
-                                                            <?php } ?>
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col">
-                                                    <div class="mb-3">
-                                                        <label for="">ครูสอนแทน</label>
-                                                        <select name="insteadTeacher" id="teacherEdit" class="form-select teacherEdit">
-                                                            
-                                                        </select>
-                                                    </div>
-                                                </div>  
-                                            </div>
-                                            <?php } ?>
-                                            <button class="btn btn-warning w-100" type="submit">แก้ไข</button>
-                                            
-                                        </div>
+                                        <?php } ?>
+                                        <button class="btn btn-warning w-100" type="submit">แก้ไข</button>
                                         
-                                    </form>
-                                </div>
+                                    </div>
+                                    
+                                </form>
                             </div>
                         </div>
-                        <div>
-                            <form action="" method="post" class="">
-                                <input type="hidden" value="<?php echo $rowN['id'] ?>" name="recID">
-                                <button class="btn btn-sm btn-danger" type="submit" name="delete">ลบ</button>
-                            </form>
-                        </div>
-                        </td>
-                    </tr>
-                    <?php } ?>
-                </table>
-            </div>
+                    </div>
+                    <div>
+                        <form action="" method="post" class="">
+                            <input type="hidden" value="<?php echo $rowN['id'] ?>" name="recID">
+                            <button class="btn btn-sm btn-danger" type="submit" name="delete">ลบ</button>
+                        </form>
+                    </div>
+                    </td>
+                </tr>
+                <?php } ?>
+            </table>
         </div>
     </div>
 <?php } ?>
