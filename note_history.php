@@ -161,12 +161,7 @@ $queryWeek = mysqli_query($conn,$sqlWeek);
                         }
                         ?>
                         </td>
-                        <?php 
-                        // $year = date('Y');
-                        // function Years($year) {
-                        //     return (string)($year + 543);
-                        // } ?>
-                        <td><?php echo $rowN['term']?></td>
+                        <td><?php echo $rowN['term'] . " / " . Years($year); ?></td>
                     </tr>
                     <?php }} ?>
                 </table>
