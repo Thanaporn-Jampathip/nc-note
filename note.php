@@ -281,19 +281,18 @@ if($usertype === 'user'){
 <?php }elseif ($usertype == 'user'){ ?>
     <!-- USER PAGE -->
     <div class="container m-2 p-4 border rounded-3"style="height: auto;">
-            <h5>บันทึกการเรียน / การสอน</h5>
-            <hr>
-            <div class="d-flex justify-content-between">
-                <p>ฟอร์มบันทึกการเรียน / การสอน<br>
-                ภาคเรียนที่ <?php echo $term ?> ปีการศึกษา <?php echo Years($year); ?></p>
-
-                <div class="d-flex align-items-start">
+        <h5>บันทึกการเรียน / การสอน</h5>
+        <hr>
+        <div class="d-flex justify-content-between">
+            <p>ฟอร์มบันทึกการเรียน / การสอน<br>
+            ภาคเรียนที่ <?php echo $term ?> ปีการศึกษา <?php echo Years($year); ?></p>
+            <div class="d-flex align-items-start">
                     <!-- BUTTON ADD -->
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#saveFormModal">บันทึก</button>                
-                </div>
             </div>
-            <!-- MODAL ADD -->
-            <div class="modal fade" id="saveFormModal" tabindex="-1" aria-labelledby="addFormLabel" aria-hidden="true">
+        </div>
+        <!-- MODAL ADD -->
+        <div class="modal fade" id="saveFormModal" tabindex="-1" aria-labelledby="addFormLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <!-- FORM ADD -->
@@ -464,13 +463,13 @@ if($usertype === 'user'){
                         </form>
                     </div>
                 </div>
-            </div>
+        </div>
             
-            <!-- DATA -->
-            <br>
+        <!-- DATA -->
+        <br>
+        <h5 class="text-center">รายการบันทึก</h5>
+        <p class="text-center"><st>วันที่ <?php echo convertToThaiDate(date('Y-m-d')); ?></p>
         <div class="table-responsive" >
-            <h5 class="text-center">รายการบันทึก</h5>
-            <p class="text-center"><st>วันที่ <?php echo convertToThaiDate(date('Y-m-d')); ?></p>
             <table class="table table-bordered table-sm">
                 <tr class=" table table-info">
                     <th>ชื่อบัญชีห้อง</th>
