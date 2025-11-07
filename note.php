@@ -520,7 +520,7 @@ if($usertype === 'user'){
                     }
                     ?></td>
                     <td><?php echo $rowN['term'] . " / " . Years($year)?></td>
-                    <td class="buttonInTable d-flex justify-content-around ">
+                    <td class="buttonInTable d-flex justify-content-around gap-2">
                         <div class="">
                             <button class="btn btn-sm btn-warning" data-bs-toggle="modal" data-bs-target="#editNoteUserModal<?php echo $rowN['id'] ?>">แก้ไข</button>
                         </div>
