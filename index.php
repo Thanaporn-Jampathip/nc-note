@@ -956,7 +956,8 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
             </p>
         </div>
         <br>
-        <h6 class="text-center">สถิติประจำวัน</h6>
+        <h5 class="text-center">สถิติ</h5>
+        <p class="text-center">วันที่ <?php echo convertToThaiDate(date('Y-m-d')); ?></p>
         <div class="d-flex justify-content-center">
             <canvas id="userChart" width="900" height="300"></canvas>
         </div>

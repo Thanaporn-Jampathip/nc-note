@@ -91,11 +91,19 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
     body {
         overflow-x: hidden;
     }
+    .search-button{
+        margin: 10px 0 2rem 0;
+    }
 
     @media only screen and (max-width: 576px) {
         .topic {
             display: flex;
             flex-direction: column;
+        }
+
+        .weeks_topic {
+            width: 100%;
+            margin-bottom: 10px;
         }
 
         .weeks_topic form {
@@ -106,7 +114,18 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
             width: 100%;
             box-sizing: border-box;
         }
+
+        .search {
+            flex-direction: row;
+        }
+        .search-button{
+            margin: 2px 0 1rem 0;
+        }
+        .weeks_topic select{
+            width: 100% !important;
+        }
     }
+
 
     table tr {
         white-space: nowrap;
@@ -131,7 +150,7 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                     ภาคเรียนที่ <?php echo $term ?> ปีการศึกษา <?php echo Years($year); ?></p>
 
                 <form method="get" action="">
-                    <div class="d-flex justify-content-center align-items-center">
+                    <div class="search d-flex justify-content-center align-items-center">
                         <!-- Select Week -->
                         <div class="weeks_topic text-center ms-auto pe-2">
                             <p class="pe-3 mb-0">สัปดาห์ที่</p>
@@ -155,13 +174,13 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                             </select>
                         </div>
                     </div>
-                    <div class="mt-2">
+                    <div class="search-button">
                         <button type="submit" name="search" class="btn btn-primary btn-sm w-100">ค้นหา</button>
                     </div>
                 </form>
             </div>
 
-            <h6 class="text-center">ประวัติบันทึก</h6><br>
+            <h5 class="text-center mb-4">ประวัติบันทึก</h5>
             <div class="table-responsive">
                 <table class="table table-bordered table-sm" width="100%">
                     <tr class="table table-info">
