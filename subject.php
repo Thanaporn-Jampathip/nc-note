@@ -293,8 +293,8 @@ if($term >= 5 && $term <= 9){
                 Swal.fire({
                 title: "เพิ่มสำเร็จ",
                 icon: "success",
-                confirmButtonText: "ปิด",
-                draggable: true
+                timer: 1000,
+                didOpen: () => Swal.showLoading()
                 }).then(() =>{
                     $('#addFormModal').modal('hide');
                     location.reload();
@@ -405,12 +405,12 @@ if(isset($_POST['deleteSubject'])){
 }
 // ถ้ามีการเปลี่ยนเทอม จะทำการลบข้อมูลของเทอมเก่าออกทั้งหมด แล้วต้องกรอกรายวิชาใหม่ทั้งหมด
 // ลบเทอมก่อน
-if($term == '2'){
-   $sqlDeleteTerm1 = "DELETE FROM record WHERE term = '1'";
-   mysqli_query($conn, $sqlDeleteTerm1);
-}elseif($term == '1'){
-   $sqlDeleteTerm2 = "DELETE FROM record WHERE term = '2'";
-   mysqli_query($conn, $sqlDeleteTerm2);
-}
+// if($term == '2'){
+//    $sqlDeleteTerm1 = "DELETE FROM record WHERE term = '1'";
+//    mysqli_query($conn, $sqlDeleteTerm1);
+// }elseif($term == '1'){
+//    $sqlDeleteTerm2 = "DELETE FROM record WHERE term = '2'";
+//    mysqli_query($conn, $sqlDeleteTerm2);
+// }
 
  ?>
