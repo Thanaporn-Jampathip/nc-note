@@ -41,8 +41,8 @@ if($query){
             Swal.fire({
             title: "แก้ไขสำเร็จ",
             icon: "success",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1000,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="../subject.php";
             })
@@ -52,8 +52,8 @@ if($query){
             Swal.fire({
             title: "แก้ไขไม่สำเร็จ",
             icon: "error",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1000,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="../subject.php";
             })
