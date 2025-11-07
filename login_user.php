@@ -59,7 +59,7 @@ include './backend/db.php';
 
         <!-- PHP in action -->
         <form action="" method="post" class="d-flex justify-content-center">
-            <div class="card mt-4 shadow-lg">
+            <div class="card mt-3 shadow-lg">
                 <div class="card-header bg-primary">
                     <h5 class="head text-light">เข้าสู่ระบบ</h5>
                 </div>
