@@ -26,7 +26,7 @@
             Swal.fire({
             title: "รหัสยืนยันนี้ถูกใช้แล้ว",
             icon: "error",
-            timer: 1000,
+            timer: 1500,
             didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="../teacher.php";
@@ -41,7 +41,7 @@
             Swal.fire({
             title: "แก้ไขสำเร็จ",
             icon: "success",
-            timer: 1000,
+            timer: 1500,
             didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="../teacher.php";
