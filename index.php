@@ -745,7 +745,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                                         $query = mysqli_query($conn, $sql);
                                         while ($row = mysqli_fetch_array($query)) {
                                         ?>
-                                            <option value="<?php echo $row['term'] . ' ' . $userID ?>"><?php echo $row['term'] ?></option>
+                                            <option value="2 <?php echo $row['term'] . ' ' . $userID ?>"><?php echo $row['term'] ?></option>
                                         <?php } ?>
                                     </select>
                                 </form>
