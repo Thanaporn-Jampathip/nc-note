@@ -259,8 +259,8 @@ if(isset($_POST['teacherDelete'])){
             Swal.fire({
             title: "ลบสำเร็จ",
             icon: "success",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1000,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="teacher.php";
             })
@@ -270,8 +270,8 @@ if(isset($_POST['teacherDelete'])){
             Swal.fire({
             title: "ลบไม่สำเร็จ",
             icon: "error",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1000,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="teacher.php";
             })
