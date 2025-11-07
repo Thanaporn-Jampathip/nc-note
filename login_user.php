@@ -35,9 +35,7 @@ include './backend/db.php';
 
         .card {
             border-radius: 15px;
-            /* ปรับมุมโค้ง */
             overflow: hidden;
-            /* ป้องกัน header เกินขอบ */
         }
 
         .card-header {
