@@ -17,8 +17,9 @@ $sqlB = "SELECT * FROM branch";
 $queryB = mysqli_query($conn, $sqlB);
 //แปลงเป็นไทย ปี
 $year = date('Y');
-function Years($year) {
-    return (string)($year + 543);
+function Years($year)
+{
+    return (string) ($year + 543);
 }
 //ภาคเรียน
 $term = date('n');
@@ -114,7 +115,8 @@ if ($term >= 5 && $term <= 9) {
                                                 while ($branch = mysqli_fetch_array($queryB)) {
                                                     ?>
                                                     <option value="<?php echo $branch['id'] ?>">
-                                                        <?php echo $branch['name'] ?></option>
+                                                        <?php echo $branch['name'] ?>
+                                                    </option>
                                                 <?php } ?>
                                             </select>
                                         </div>
@@ -230,7 +232,8 @@ if ($term >= 5 && $term <= 9) {
                                                                 ?>
                                                                 <option value="<?php echo $branchShow['id'] ?>" <?php if ($row['branch_id'] == $branchShow['id'])
                                                                        echo 'selected'; ?>>
-                                                                    <?php echo $branchShow['name'] ?></option>
+                                                                    <?php echo $branchShow['name'] ?>
+                                                                </option>
                                                             <?php } ?>
                                                         </select>
                                                     </div>
@@ -317,8 +320,8 @@ if ($term >= 5 && $term <= 9) {
                 Swal.fire({
                     title: "เพิ่มสำเร็จ",
                     icon: "success",
-                    confirmButtonText: "ปิด",
-                    draggable: true
+                    timer: 1000,
+                    didOpen: () => Swal.showLoading()
                 }).then(() => {
                     $('#insertFormAcc').modal('hide');
                     location.reload();
@@ -340,8 +343,8 @@ if ($_POST) {
             Swal.fire({
             title: "ลบสำเร็จ",
             icon: "success",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1000,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="account.php";
             })
@@ -351,8 +354,8 @@ if ($_POST) {
             Swal.fire({
             title: "ลบไม่สำเร็จ",
             icon: "error",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1000,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="account.php";
             })

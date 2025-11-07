@@ -33,8 +33,8 @@ if($query){
             Swal.fire({
             title: "แก้ไขสำเร็จ",
             icon: "success",
-            confirmButtonText: "ปิด",
-            draggable: true
+            timer: 1000,
+            didOpen: () => Swal.showLoading()
             }).then(() =>{
                 window.location.href="../account.php";
             })
