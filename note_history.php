@@ -91,7 +91,8 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
     body {
         overflow-x: hidden;
     }
-    .search-button{
+
+    .search-button {
         margin: 10px 0 2rem 0;
     }
 
@@ -118,10 +119,12 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
         .search {
             flex-direction: row;
         }
-        .search-button{
+
+        .search-button {
             margin: 2px 0 1rem 0;
         }
-        .weeks_topic select{
+
+        .weeks_topic select {
             width: 100% !important;
         }
     }
@@ -178,6 +181,14 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                         <button type="submit" name="search" class="btn btn-primary btn-sm w-100">ค้นหา</button>
                     </div>
                 </form>
+                 <?php
+                if (isset($_GET['search'])) {
+                    ?>
+                    <div>
+                        <p>asdasdsdasdadasdasd</p>
+                    </div>
+
+                <?php } ?>
             </div>
 
             <h5 class="text-center mb-4">ประวัติบันทึก</h5>
@@ -216,7 +227,6 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                                     $missStudent = $rowN['miss'];
                                     $allStudent = $rowN['all_student'];
                                     $studentCome = $allStudent - $missStudent;
-                                    $found = true;
                                     ?>
                                     <tr>
                                         <td><?php echo $rowN['username'] ?></td>
