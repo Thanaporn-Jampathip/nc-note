@@ -114,6 +114,15 @@ $queryData = mysqli_query($conn, $sqlData);
         overflow-x: hidden;
     }
 
+    @media only screen and (min-width: 576px){
+        .form {
+        display: flex;
+        align-items: flex-end; 
+        gap: 0.5rem;           
+        flex-wrap: wrap;        
+    }
+
+    }
     @media only screen and (max-width: 576px) {
         .topic {
             display: flex;
@@ -166,9 +175,9 @@ $queryData = mysqli_query($conn, $sqlData);
                 <p>ประวัติบันทึกการเรียน / การสอน ประจำสัปดาห์<br>
                     ภาคเรียนที่ <?php echo $term ?> ปีการศึกษา <?php echo Years($year); ?></p>
 
-                <div>
+                <div class="form">
                     <form method="get" action="" id="searchDataFromWeekTerm" class="mb-3">
-                        <div class="search d-flex justify-content-center mb-2">
+                        <div class="search d-flex justify-content-center mb-3">
                             <!-- Select Week --> 
                             <div class="weeks_topic text-center ms-auto pe-2">
                                 <label for="" class="form-label">สัปดาห์</label>
