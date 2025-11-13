@@ -75,6 +75,27 @@ $stmtWeekTerm = $conn->prepare($sqlWeekTerm);
 $stmtWeekTerm->bind_param("ii", $userid, $term);
 $stmtWeekTerm->execute();
 $queryWeekTerm = $stmtWeekTerm->get_result();
+
+// ถึงข้อมูลจากการเลือกวันที่ 
+$Date = null;
+if (isset($_GET['searchDate'])) {
+    $Date = $_GET['date'] ?? null;
+}
+$sqlData = "
+    SELECT record.id, record.begin_period,record.term,record.missStudentName, record.insteadTeacher,
+           record.end_period, record.date, record.week,record.miss,record.all_student, record.note,
+           teacher.name AS teacherName, user.username AS username,
+           subject.subID AS subjectID, subject.name AS subjectName,
+           t2.name AS insteadTeacherName, teacher.id AS teacherID
+    FROM record
+    JOIN user ON record.user_id = user.id
+    JOIN subject ON record.subject_id = subject.id
+    JOIN teacher ON subject.teacher_id = teacher.id
+    LEFT JOIN teacher t2 ON record.insteadTeacher = t2.id
+    WHERE record.date = '$Date'
+    ORDER BY record.id DESC
+";
+$queryData = mysqli_query($conn, $sqlData);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -85,15 +106,12 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
     <title>บันทึกการเรียน / สอน - ประวัติบันทึกการเรียน</title>
     <link rel="shortcut icon" href="image/logo_nvc.png" type="image/x-icon">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 </head>
 <style>
     html,
     body {
         overflow-x: hidden;
-    }
-
-    .search-button {
-        margin: 10px 0 2rem 0;
     }
 
     @media only screen and (max-width: 576px) {
@@ -116,16 +134,12 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
             box-sizing: border-box;
         }
 
-        .search {
-            flex-direction: row;
-        }
-
-        .search-button {
-            margin: 2px 0 1rem 0;
-        }
-
         .weeks_topic select {
             width: 100% !important;
+        }
+
+        .searchWeekTerm {
+            margin-top: 2;
         }
     }
 
@@ -152,46 +166,72 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                 <p>ประวัติบันทึกการเรียน / การสอน ประจำสัปดาห์<br>
                     ภาคเรียนที่ <?php echo $term ?> ปีการศึกษา <?php echo Years($year); ?></p>
 
-                <form method="get" action="">
-                    <div class="search d-flex justify-content-center align-items-center">
-                        <!-- Select Week -->
-                        <div class="weeks_topic text-center ms-auto pe-2">
-                            <p class="pe-3 mb-0">สัปดาห์ที่</p>
-                            <select name="weeks" class="form-select" style="width: auto">
-                                <option value="" selected disabled>เลือก</option>
-                                <?php while ($rowWeek = mysqli_fetch_array($queryWeekTerm)) { ?>
-                                    <option value="<?php echo $rowWeek['week'] ?>">
-                                        <?php echo $rowWeek['week'] ?>
-                                    </option>
-                                <?php } ?>
-                            </select>
-                        </div>
+                <div>
+                    <form method="get" action="" id="searchDataFromWeekTerm" class="mb-0">
+                        <div class="search d-flex justify-content-center mb-2">
+                            <!-- Select Week -->
+                            <div class="weeks_topic text-center ms-auto pe-2">
+                                <label for="" class="form-label">สัปดาห์</label>
+                                <select name="weeks" class="form-select" style="width: auto" id="weeks" required>
+                                    <option value="" selected disabled>-- เลือก --</option>
+                                    <?php while ($rowWeek = mysqli_fetch_array($queryWeekTerm)) { ?>
+                                        <option value="<?php echo $rowWeek['week'] ?>">
+                                            <?php echo $rowWeek['week'] ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                            </div>
 
-                        <!-- Select Term -->
-                        <div class="weeks_topic text-center">
-                            <p class="pe-3 mb-0">ภาคเรียนที่</p>
-                            <select name="terms" class="form-select" style="width: auto">
-                                <option value="" selected disabled>เลือก</option>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                            </select>
+                            <!-- Select Term -->
+                            <div class="weeks_topic text-center">
+                                <label for="" class="form-label">ภาคเรียนที่</label>
+                                <select name="terms" class="form-select" style="width: auto" id="terms" required>
+                                    <option value="" selected disabled>-- เลือก --</option>
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-                    <div class="search-button">
-                        <button type="submit" name="search" class="btn btn-primary btn-sm w-100">ค้นหา</button>
-                    </div>
-                </form>
-                 <?php
-                if (isset($_GET['search'])) {
-                    ?>
-                    <div>
-                        <p>asdasdsdasdadasdasd</p>
-                    </div>
-
-                <?php } ?>
+                        <button type="submit" name="search"
+                            class="searchWeekTerm btn btn-primary btn-sm w-100">ค้นหา</button>
+                    </form>
+                    <?php
+                    $week = $_GET['weeks'] ?? null;
+                    $term = $_GET['terms'] ?? null;
+                    if ($week && $term) {
+                        $_SESSION['week'] = $week;
+                        $_SESSION['term'] = $term;
+                    }
+                    if ($_SESSION['week'] && $_SESSION['term']) {
+                        $weeks = $_SESSION['week'];
+                        $terms = $_SESSION['term'];
+                        ?>
+                        <!-- form วันที่ -->
+                        <div class="my-3">
+                            <form action="" method="get" class="w-100">
+                                <label for="" class="form-label d-flex justify-content-center">วันที่</label>
+                                <select name="date" id="" class="form-select" required>
+                                    <option value="" selected dissable>-- เลือก --</option>
+                                    <?php
+                                    $sqlFitterDate = "SELECT DISTINCT date FROM record WHERE week = '$weeks' AND term = '$terms'";
+                                    $queryFitterDate = mysqli_query($conn, $sqlFitterDate);
+                                    while ($rowDate = mysqli_fetch_array($queryFitterDate)) {
+                                        ?>
+                                        <option value="<?php echo $rowDate['date'] ?>">
+                                            <?php echo convertToThaiDate($rowDate['date']) ?>
+                                        </option>
+                                    <?php } ?>
+                                </select>
+                                <button class="btn btn-sm btn-primary w-100 mt-3" name="searchDate"
+                                    type="submit">ค้นหา</button>
+                            </form>
+                        </div>
+                    <?php } ?>
+                </div>
             </div>
 
             <h5 class="text-center mb-4">ประวัติบันทึก</h5>
+            <!-- ประวัติบันทึกทั้งหมดที่เลือกจาก สัปดาห์และเทอมที่เลือก -->
             <div class="table-responsive">
                 <table class="table table-bordered table-sm" width="100%">
                     <tr class="table table-info">
@@ -209,55 +249,57 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                         <th>ภาคเรียนที่</th>
                     </tr>
                     <?php
-                    $selectWeek = null;
-                    $selectTerm = null;
-                    if (isset($_GET['search'])) {
-                        $selectWeek = $_GET['weeks'];
-                        $selectTerm = $_GET['terms'];
-                        //Check Date With Week and Term
-                        $sqlCheck = "SELECT week, term FROM record WHERE term = '$selectTerm' AND week = '$selectWeek'";
-                        $queryCheck = mysqli_query($conn, $sqlCheck);
-                        if (mysqli_num_rows($queryCheck) > 0) {
-                            mysqli_data_seek($queryN, 0);
-                            while ($rowN = mysqli_fetch_assoc($queryN)) {
-                                if (
-                                    $rowN['week'] == $selectWeek && $rowN['term'] == $selectTerm
-                                ) {
+                    if (isset($_GET['weeks']) && isset($_GET['terms'])) {
+                        $selectWeek = null;
+                        $selectTerm = null;
+                        if (isset($_GET['search'])) {
+                            $selectWeek = $_GET['weeks'];
+                            $selectTerm = $_GET['terms'];
+                            //Check Date With Week and Term
+                            $sqlCheck = "SELECT week, term FROM record WHERE term = '$selectTerm' AND week = '$selectWeek'";
+                            $queryCheck = mysqli_query($conn, $sqlCheck);
+                            if (mysqli_num_rows($queryCheck) > 0) {
+                                mysqli_data_seek($queryN, 0);
+                                while ($rowN = mysqli_fetch_assoc($queryN)) {
+                                    if (
+                                        $rowN['week'] == $selectWeek && $rowN['term'] == $selectTerm
+                                    ) {
 
-                                    $missStudent = $rowN['miss'];
-                                    $allStudent = $rowN['all_student'];
-                                    $studentCome = $allStudent - $missStudent;
-                                    ?>
-                                    <tr>
-                                        <td><?php echo $rowN['username'] ?></td>
-                                        <td><?php echo $rowN['subjectID'] ?></td>
-                                        <td><?php echo $rowN['subjectName'] ?></td>
-                                        <td><?php echo $rowN['begin_period'] . ' - ' . $rowN['end_period'] ?></td>
-                                        <td><?php echo $rowN['miss'] ?></td>
-                                        <td><?php echo nl2br($rowN['missStudentName']) ?></td>
-                                        <td><?php echo $studentCome ?></td>
-                                        <td><?php echo $rowN['teacherName'] ?></td>
-                                        <td><?php echo convertToThaiDate($rowN['date']); ?></td>
-                                        <td><?php echo $rowN['week'] ?></td>
-                                        <td>
-                                            <?php
-                                            if ($rowN['note'] == 'เข้าสอนปกติ') {
-                                                echo '<span class="text-success">เข้าสอนปกติ</span>';
-                                            } elseif ($rowN['note'] == 'สอนแทน') {
-                                                echo '<span class="text-warning">ครูสอนแทน</span><br>';
-                                                if (!empty($rowN['insteadTeacherName'])) {
-                                                    echo $rowN['insteadTeacherName'];
+                                        $missStudent = $rowN['miss'];
+                                        $allStudent = $rowN['all_student'];
+                                        $studentCome = $allStudent - $missStudent;
+
+                                        ?>
+                                        <tr>
+                                            <td><?php echo $rowN['username'] ?></td>
+                                            <td><?php echo $rowN['subjectID'] ?></td>
+                                            <td><?php echo $rowN['subjectName'] ?></td>
+                                            <td><?php echo $rowN['begin_period'] . ' - ' . $rowN['end_period'] ?></td>
+                                            <td><?php echo $rowN['miss'] ?></td>
+                                            <td><?php echo nl2br($rowN['missStudentName']) ?></td>
+                                            <td><?php echo $studentCome ?></td>
+                                            <td><?php echo $rowN['teacherName'] ?></td>
+                                            <td><?php echo convertToThaiDate($rowN['date']); ?></td>
+                                            <td><?php echo $rowN['week'] ?></td>
+                                            <td>
+                                                <?php
+                                                if ($rowN['note'] == 'เข้าสอนปกติ') {
+                                                    echo '<span class="text-success">เข้าสอนปกติ</span>';
+                                                } elseif ($rowN['note'] == 'สอนแทน') {
+                                                    echo '<span class="text-warning">ครูสอนแทน</span><br>';
+                                                    if (!empty($rowN['insteadTeacherName'])) {
+                                                        echo $rowN['insteadTeacherName'];
+                                                    }
                                                 }
-                                            }
-                                            ?>
-                                        </td>
-                                        <td><?php echo $rowN['term'] . " / " . Years($year); ?></td>
-                                    </tr>
-                                    <?php
+                                                ?>
+                                            </td>
+                                            <td><?php echo $rowN['term'] . " / " . Years($year); ?></td>
+                                        </tr>
+                                        <?php
+                                    }
                                 }
-                            }
-                        } else {
-                            echo '<script>
+                            } else {
+                                echo '<script>
                                 Swal.fire({
                                 title: "ไม่พบข้อมูล",
                                 icon: "error",
@@ -267,12 +309,44 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                                     window.location.href="note_history.php";
                                 })
                             </script>';
+                            }
                         }
-                    }
-                    ?>
+                    } elseif (isset($_GET['date'])) {
+                        while ($rowData = mysqli_fetch_array($queryData)) {
+                            $missStudent = $rowData['miss'];
+                            $allStudent = $rowData['all_student'];
+                            $studentCome = $allStudent - $missStudent;
+                            ?>
+                            <tr>
+                                <td><?php echo $rowData['username'] ?></td>
+                                <td><?php echo $rowData['subjectID'] ?></td>
+                                <td><?php echo $rowData['subjectName'] ?></td>
+                                <td><?php echo $rowData['begin_period'] . ' - ' . $rowData['end_period'] ?></td>
+                                <td><?php echo $rowData['miss'] ?></td>
+                                <td><?php echo nl2br($rowData['missStudentName']) ?></td>
+                                <td><?php echo $studentCome ?></td>
+                                <td><?php echo $rowData['teacherName'] ?></td>
+                                <td><?php echo convertToThaiDate($rowData['date']); ?></td>
+                                <td><?php echo $rowData['week'] ?></td>
+                                <td>
+                                    <?php
+                                    if ($rowData['note'] == 'เข้าสอนปกติ') {
+                                        echo '<span class="text-success">เข้าสอนปกติ</span>';
+                                    } elseif ($rowData['note'] == 'สอนแทน') {
+                                        echo '<span class="text-warning">ครูสอนแทน</span><br>';
+                                        if (!empty($rowData['insteadTeacherName'])) {
+                                            echo $rowData['insteadTeacherName'];
+                                        }
+                                    }
+                                    ?>
+                                </td>
+                                <td><?php echo $rowData['term'] . " / " . Years($year); ?></td>
+                            </tr>
+                        <?php }
+                    } ?>
                 </table>
             </div>
-        </div>
+
 </body>
 
 </html>
