@@ -167,9 +167,9 @@ $queryData = mysqli_query($conn, $sqlData);
                     ภาคเรียนที่ <?php echo $term ?> ปีการศึกษา <?php echo Years($year); ?></p>
 
                 <div>
-                    <form method="get" action="" id="searchDataFromWeekTerm" class="mb-0">
+                    <form method="get" action="" id="searchDataFromWeekTerm" class="mb-3">
                         <div class="search d-flex justify-content-center mb-2">
-                            <!-- Select Week -->
+                            <!-- Select Week --> 
                             <div class="weeks_topic text-center ms-auto pe-2">
                                 <label for="" class="form-label">สัปดาห์</label>
                                 <select name="weeks" class="form-select" style="width: auto" id="weeks" required>
