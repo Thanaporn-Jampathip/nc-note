@@ -35,8 +35,9 @@ function convertToThaiDate($dateStr)
 }
 // แปลงเป็นไทย ปี
 $year = date('Y');
-function Years($year) {
-    return (string)($year + 543);
+function Years($year)
+{
+    return (string) ($year + 543);
 }
 
 $sql = 'SELECT name FROM branch WHERE name != "สามัญสัมพันธ์"';
@@ -247,29 +248,29 @@ if (isset($_GET['weekChart'])) {
 }
 // Term
 if (isset($_GET['termChart'])) {
-    list($term, $userID) = explode(' ', $_GET['termChart']);
+    $data = explode(' ', $_GET['termChart']);
+
+    $term = $data[0] ?? '';
+    // ถ้า userID ตัวจริงคือ $data[2] (จากผล dump เดิม)
+    $userID = $data[2] ?? '';
 
     $sqlTerm = "
-        SELECT r.week,r.term,r.miss,r.missStudentName,r.all_student, u.username
-        FROM record r
-        JOIN user u ON r.user_id = u.id
-        WHERE r.id IN (
-            SELECT MAX(id)
-            FROM record
-            WHERE user_id = '$userID'
-            AND term = $term
-            AND (week IS NOT NULL)
-            AND (date IN (
-                SELECT MAX(date)
-                FROM record
-                WHERE user_id = '$userID'
-                    AND term = $term
-                GROUP BY week
-            ))
-            GROUP BY week
-        )
-        ORDER BY r.week ASC
-        ";
+    SELECT r.week, r.term, r.miss, r.missStudentName, r.all_student, u.username
+    FROM record r
+    JOIN user u ON r.user_id = u.id
+    JOIN (
+        SELECT week, MAX(id) AS max_id
+        FROM record
+        WHERE user_id = '$userID'
+        AND term = $term
+        GROUP BY week
+    ) AS t
+        ON r.id = t.max_id
+    WHERE r.user_id = '$userID'
+    AND r.term = $term
+    ORDER BY r.week ASC;
+";
+
     $queryTerm = mysqli_query($conn, $sqlTerm);
 
 
@@ -398,7 +399,8 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
     <script src="assets/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
 </head>
 <style>
@@ -435,10 +437,12 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                     </script>
                     <!-- ปริ้นแผนภูมิ (ภาพรวมทั้งหมดทุกสาขา) -->
                     <?php $week = isset($_GET['week']) ? $_GET['week'] : ''; ?>
-                    <form id="pdfForm" method="POST" action="./docs/googleDoc_chart1.php" target="_blank" class="ms-auto me-2">
+                    <form id="pdfForm" method="POST" action="./docs/googleDoc_chart1.php" target="_blank"
+                        class="ms-auto me-2">
                         <input type="hidden" name="chartImageFile" id="chartImageFile">
                         <input type="hidden" name="week" value="<?php echo $week; ?>">
-                        <button type="button" onclick="saveAndSubmit(first)" class="btn btn-sm btn-warning">ปริ้นแผนภูมิ</button>
+                        <button type="button" onclick="saveAndSubmit(first)"
+                            class="btn btn-sm btn-warning">ปริ้นแผนภูมิ</button>
                     </form>
                     <!-- ปริ้นเอกสารบันทึกความ (ภาพรวมทั้งหมดทุกสาขา) -->
                     <?php $week = isset($_GET['week']) ? $_GET['week'] : ''; ?>
@@ -458,12 +462,12 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                         <p class="pe-3">สัปดาห์ที่</p>
                         <form action="" method="get">
                             <select name="week" id="week" class="form-select form-sm w-auto" onchange="this.form.submit()">
-                                <option value="" selected disable   d>เลือก</option>
+                                <option value="" selected disable d>เลือก</option>
                                 <?php
                                 $sqlWeek = "SELECT DISTINCT week FROM record ORDER BY record.week + 0 DESC";
                                 $queryWeek = mysqli_query($conn, $sqlWeek);
                                 while ($rowWeek = mysqli_fetch_array($queryWeek)) {
-                                ?>
+                                    ?>
                                     <option value="<?php echo $rowWeek['week'] ?>" <?php echo ($week == $rowWeek['week'] ? 'selected' : '') ?>><?php echo $rowWeek['week'] ?></option>
                                 <?php } ?>
                             </select>
@@ -478,23 +482,23 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                     const data = {
                         labels: labels,
                         datasets: [{
-                                label: 'จำนวนเต็ม',
-                                data: [<?php echo $accountant ?>, <?php echo $marketing ?>, <?php echo $management ?>, <?php echo $logistics ?>, <?php echo $dbt ?>, <?php echo $retail ?>, <?php echo $it ?>, <?php echo $foreignLanguage ?>, <?php echo $hotelManagement ?>, <?php echo $food ?>, <?php echo $homeEconomics ?>, <?php echo $fashion ?>, <?php echo $design ?>, <?php echo $dg ?>],
-                                borderColor: 'rgb(245, 75, 75)',
-                                backgroundColor: 'rgb(241, 154, 154)',
-                            },
-                            {
-                                label: 'จำนวนห้องที่ส่ง',
-                                data: [<?php echo $sentAccountant ?>, <?php echo $sentMarketing ?>, <?php echo $sentManagement ?>, <?php echo $sentLogistics ?>, <?php echo $sentDbt ?>, <?php echo $sentRetail ?>, <?php echo $sentIt ?>, <?php echo $sentForeignLanguage ?>, <?php echo $sentHotelManagement ?>, <?php echo $sentFood ?>, <?php $sentHomeEconomics ?>, <?php echo $sentFashion ?>, <?php echo $sentDesign ?>, <?php echo $sentDg ?>],
-                                borderColor: 'rgb(245, 190, 72)',
-                                backgroundColor: 'rgb(232, 206, 151)',
-                            },
-                            {
-                                label: 'ร้อยละ',
-                                data: [<?php echo $persentageAccountant ?>, <?php echo $persentageMarketing ?>, <?php echo $persentageManagement ?>, <?php echo $persentageLogistics ?>, <?php echo $persentageDbt ?>, <?php echo $persentageRetail ?>, <?php echo $persentageIt ?>, <?php echo $persentageForeingLanguage ?>, <?php echo $persentageHotelManagement ?>, <?php echo $persentageFood ?>, <?php echo $persentageHomeEconomics ?>, <?php echo $persentageFashion ?>, <?php echo $persentageDesign ?>, <?php echo $persentageDg ?>],
-                                borderColor: 'rgb(129, 225, 129)',
-                                backgroundColor: 'rgb(175, 236, 175)',
-                            }
+                            label: 'จำนวนเต็ม',
+                            data: [<?php echo $accountant ?>, <?php echo $marketing ?>, <?php echo $management ?>, <?php echo $logistics ?>, <?php echo $dbt ?>, <?php echo $retail ?>, <?php echo $it ?>, <?php echo $foreignLanguage ?>, <?php echo $hotelManagement ?>, <?php echo $food ?>, <?php echo $homeEconomics ?>, <?php echo $fashion ?>, <?php echo $design ?>, <?php echo $dg ?>],
+                            borderColor: 'rgb(245, 75, 75)',
+                            backgroundColor: 'rgb(241, 154, 154)',
+                        },
+                        {
+                            label: 'จำนวนห้องที่ส่ง',
+                            data: [<?php echo $sentAccountant ?>, <?php echo $sentMarketing ?>, <?php echo $sentManagement ?>, <?php echo $sentLogistics ?>, <?php echo $sentDbt ?>, <?php echo $sentRetail ?>, <?php echo $sentIt ?>, <?php echo $sentForeignLanguage ?>, <?php echo $sentHotelManagement ?>, <?php echo $sentFood ?>, <?php $sentHomeEconomics ?>, <?php echo $sentFashion ?>, <?php echo $sentDesign ?>, <?php echo $sentDg ?>],
+                            borderColor: 'rgb(245, 190, 72)',
+                            backgroundColor: 'rgb(232, 206, 151)',
+                        },
+                        {
+                            label: 'ร้อยละ',
+                            data: [<?php echo $persentageAccountant ?>, <?php echo $persentageMarketing ?>, <?php echo $persentageManagement ?>, <?php echo $persentageLogistics ?>, <?php echo $persentageDbt ?>, <?php echo $persentageRetail ?>, <?php echo $persentageIt ?>, <?php echo $persentageForeingLanguage ?>, <?php echo $persentageHotelManagement ?>, <?php echo $persentageFood ?>, <?php echo $persentageHomeEconomics ?>, <?php echo $persentageFashion ?>, <?php echo $persentageDesign ?>, <?php echo $persentageDg ?>],
+                            borderColor: 'rgb(129, 225, 129)',
+                            backgroundColor: 'rgb(175, 236, 175)',
+                        }
                         ]
                     };
 
@@ -535,9 +539,9 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                         formData.append('paramiter', first);
 
                         fetch('saveChartImage.php', {
-                                method: 'POST',
-                                body: formData
-                            })
+                            method: 'POST',
+                            body: formData
+                        })
                             .then(res => res.text())
                             .then(filename => {
                                 if (filename.startsWith("chart_")) {
@@ -563,11 +567,13 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                             const second = 2;
                         </script>
                         <?php $week = isset($_GET['weekBranch']) ? $_GET['weekBranch'] : ''; ?>
-                        <form id="pdfFormSec" method="POST" action="./docs/googleDoc_chart2.php" target="_blank" class="ms-auto me-2">
+                        <form id="pdfFormSec" method="POST" action="./docs/googleDoc_chart2.php" target="_blank"
+                            class="ms-auto me-2">
                             <input type="hidden" name="chartImageFile2" id="chartImageFile2">
                             <input type="hidden" name="branchID" value="<?php echo $branchID; ?>">
                             <input type="hidden" name="week" value="<?php echo $week; ?>">
-                            <button type="button" onclick="saveAndSubmit(second)" class="btn btn-sm btn-warning">ปริ้นแผนภูมิ</button>
+                            <button type="button" onclick="saveAndSubmit(second)"
+                                class="btn btn-sm btn-warning">ปริ้นแผนภูมิ</button>
                         </form>
                         <!-- ปริ้นเอกสารบันทึกความ (ข้อมูลแต่ละสาขา) -->
                         <?php $week = isset($_GET['weekBranch']) ? $_GET['weekBranch'] : ''; ?>
@@ -589,11 +595,13 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                                     $sql = "SELECT * FROM branch WHERE name != 'สามัญสัมพันธ์'";
                                     $query = mysqli_query($conn, $sql);
                                     while ($row = mysqli_fetch_array($query)) {
-                                    ?>
-                                        <option value="<?php echo $row['id'] ?>" <?php if (isset($_GET['branch']) && $_GET['branch'] == $row['id']) echo 'selected'; ?>><?php echo $row['name'] ?></option>
+                                        ?>
+                                        <option value="<?php echo $row['id'] ?>" <?php if (isset($_GET['branch']) && $_GET['branch'] == $row['id'])
+                                               echo 'selected'; ?>><?php echo $row['name'] ?></option>
                                     <?php } ?>
                                 </select>
-                                <button class="btn btn-primary w-100 btn-sm mt-2" type="submit" name="searchDataBranch">ค้นหาเฉพาะสาขา</button>
+                                <button class="btn btn-primary w-100 btn-sm mt-2" type="submit"
+                                    name="searchDataBranch">ค้นหาเฉพาะสาขา</button>
                             </form>
                         </div>
                         <div>
@@ -601,7 +609,8 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                                 <select name="user" id="user" class="form-select">
                                     <option value="" selected disabled>-- กรุณาเลือกสาขาก่อน --</option>
                                 </select>
-                                <button class="btn btn-primary w-100 btn-sm mt-2" type="submit" name="searchDataBranch">ค้นหาผู้ใช้งาน</button>
+                                <button class="btn btn-primary w-100 btn-sm mt-2" type="submit"
+                                    name="searchDataBranch">ค้นหาผู้ใช้งาน</button>
                             </form>
                         </div>
                     </div>
@@ -622,14 +631,15 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                             <form action="" method="get" style="width: 100%;">
                                 <input type="hidden" name="id" value="<?php echo $branchID; ?>">
                                 <select name="weekBranch" id="weekBranch" class="form-select" onchange="this.form.submit()">
-                                    <option value="" disabled <?php echo empty($weekBranch) ? 'selected' : ''; ?>>-- เลือก --</option>
+                                    <option value="" disabled <?php echo empty($weekBranch) ? 'selected' : ''; ?>>-- เลือก --
+                                    </option>
                                     <?php
                                     $sqlWeeks = "SELECT DISTINCT week FROM record ORDER BY week DESC";
                                     $resultWeeks = mysqli_query($conn, $sqlWeeks);
                                     while ($rowWeek = mysqli_fetch_assoc($resultWeeks)) {
                                         $week = $rowWeek['week'];
                                         $selected = ($weekBranch == $week) ? 'selected' : '';
-                                    ?>
+                                        ?>
                                         <option value="<?php echo $week; ?>" <?php echo $selected; ?>><?php echo $week; ?></option>
                                     <?php } ?>
                                 </select>
@@ -692,9 +702,9 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                             formData.append('paramiterSec', second);
 
                             fetch('saveChartImage.php', {
-                                    method: 'POST',
-                                    body: formData
-                                })
+                                method: 'POST',
+                                body: formData
+                            })
                                 .then(resp => resp.text())
                                 .then(filenameSec => {
                                     if (filenameSec.startsWith("chart_")) {
@@ -716,20 +726,22 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                 <?php } elseif (isset($_GET['user']) || isset($_GET['weekChart']) || isset($_GET['termChart'])) { ?>
                     <div class="text-center">
                         <h6>สถิติของห้อง: <strong><?php echo $usernameChart ?? null;
-                                                    ?></strong></h6>
+                        ?></strong></h6>
                         <!-- เลือกดูรายสัปดาห์ -->
                         <div class="d-flex justify-content-center my-1">
                             <div class="mx-3">
                                 เลือกดูรายสัปดาห์
                                 <form action="" method="get" class="mt-1">
-                                    <select name="weekChart" id="weekChart" class="form-select w-100" onchange="this.form.submit()">
+                                    <select name="weekChart" id="weekChart" class="form-select w-100"
+                                        onchange="this.form.submit()">
                                         <option value="" selected disabled>เลือกดูรายสัปดาห์</option>
                                         <?php
                                         $sql = "SELECT DISTINCT week FROM record WHERE user_id = $userID ORDER by record.week DESC";
                                         $query = mysqli_query($conn, $sql);
                                         while ($row = mysqli_fetch_array($query)) {
-                                        ?>
-                                            <option value="<?php echo $row['week'] . ' ' . $userID ?>"><?php echo $row['week'] ?></option>
+                                            ?>
+                                            <option value="<?php echo $row['week'] . ' ' . $userID ?>"><?php echo $row['week'] ?>
+                                            </option>
                                         <?php } ?>
                                     </select>
                                 </form>
@@ -738,14 +750,16 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                                 <!-- เลือกดูรายเทอม -->
                                 เลือกดูรายเทอม
                                 <form action="" method="get" class="mt-1">
-                                    <select name="termChart" id="termChart" class="form-select w-100" onchange="this.form.submit()">
+                                    <select name="termChart" id="termChart" class="form-select w-100"
+                                        onchange="this.form.submit()">
                                         <option value="" selected disabled>เลือกดูรายเทอม</option>
                                         <?php
                                         $sql = "SELECT DISTINCT term FROM record WHERE user_id = $userID ORDER by record.term ASC";
                                         $query = mysqli_query($conn, $sql);
                                         while ($row = mysqli_fetch_array($query)) {
-                                        ?>
-                                            <option value="2 <?php echo $row['term'] . ' ' . $userID ?>"><?php echo $row['term'] ?></option>
+                                            ?>
+                                            <option value="2 <?php echo $row['term'] . ' ' . $userID ?>"><?php echo $row['term'] ?>
+                                            </option>
                                         <?php } ?>
                                     </select>
                                 </form>
@@ -762,23 +776,23 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                         const dataDataToday = {
                             labels: labelsToday,
                             datasets: [{
-                                    label: 'ขาดเรียน',
-                                    data: dataMiss,
-                                    backgroundColor: 'rgb(245, 190, 72)',
-                                    borderColor: 'rgb(200, 150, 50)',
-                                },
-                                {
-                                    label: 'มาเรียน',
-                                    data: dataCome,
-                                    backgroundColor: 'rgb(129, 225, 129)',
-                                    borderColor: 'rgb(75, 150, 75)',
-                                },
-                                {
-                                    label: 'ทั้งหมด',
-                                    data: dataAll,
-                                    borderColor: 'rgb(76, 92, 243)',
-                                    backgroundColor: 'rgba(76, 92, 243, 0.5)',
-                                }
+                                label: 'ขาดเรียน',
+                                data: dataMiss,
+                                backgroundColor: 'rgb(245, 190, 72)',
+                                borderColor: 'rgb(200, 150, 50)',
+                            },
+                            {
+                                label: 'มาเรียน',
+                                data: dataCome,
+                                backgroundColor: 'rgb(129, 225, 129)',
+                                borderColor: 'rgb(75, 150, 75)',
+                            },
+                            {
+                                label: 'ทั้งหมด',
+                                data: dataAll,
+                                borderColor: 'rgb(76, 92, 243)',
+                                backgroundColor: 'rgba(76, 92, 243, 0.5)',
+                            }
                             ]
                         };
 
@@ -857,11 +871,11 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                                     <td><?php echo $comeStudent ?></td>
                                     <td><?php echo $rowDetail['all_student'] ?></td>
                                     <td><?php
-                                        if ($rowDetail['note'] == 'เข้าสอนปกติ') {
-                                            echo '<span class="text-success">เข้าสอนปกติ</span>';
-                                        } elseif ($rowDetail['note'] == 'สอนแทน') {
-                                            echo '<span class="text-warning">ครูสอนแทน</span>';
-                                        } ?>
+                                    if ($rowDetail['note'] == 'เข้าสอนปกติ') {
+                                        echo '<span class="text-success">เข้าสอนปกติ</span>';
+                                    } elseif ($rowDetail['note'] == 'สอนแทน') {
+                                        echo '<span class="text-warning">ครูสอนแทน</span>';
+                                    } ?>
                                         <br>
                                         <?php
                                         if ($rowDetail['note'] === 'สอนแทน' && !empty($rowDetail['teacherName'])) {
@@ -874,9 +888,9 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                         </table>
                     </div>
                     <!-- ข้อมูลสัปดาห์นี้ -->
-                <?php
+                    <?php
                 } elseif (isset($dataWeek)) {
-                ?>
+                    ?>
                     <h5 class="mb-3">รายละเอียดจากกราฟ สัปดาห์ที่
                         <?php
                         foreach ($dataWeek as $week) {
@@ -897,7 +911,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                             <?php
                             foreach ($dataWeek as $row):
                                 $come = $row['all_student'] - $row['miss'];
-                            ?>
+                                ?>
                                 <tr>
                                     <td><?php echo convertToThaiDate($row['date']); ?></td>
                                     <td><?php echo $row['miss'] ?></td>
@@ -910,7 +924,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                     </div>
                     <!-- show data term -->
                 <?php } elseif (isset($dataTerm)) {
-                ?>
+                    ?>
                     <h5 class="mb-3">รายละเอียดจากกราฟ ภาคเรียนที่
                         <?php
                         foreach ($dataTerm as $term) {
@@ -931,7 +945,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                             <?php
                             foreach ($dataTerm as $row):
                                 $come = $row['all_student'] - $row['miss'];
-                            ?>
+                                ?>
                                 <tr>
                                     <td><?php echo $row['week']; ?></td>
                                     <td><?php echo $row['miss'] ?></td>
@@ -944,28 +958,28 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                     </div>
                 <?php } ?>
             </div>
-    </div>
-<?php } elseif ($usertype == 'user') { ?>
-    <!-- USER PAGE -->
-    <div class="container m-2 p-4 border rounded-3" style="height: auto; width: 100%">
-        <h5>หน้าหลัก</h5>
-        <hr>
-        <div class="d-flex justify-content-between">
-            <p>สถิติแต่ละวันและวิชาในแต่ละวัน <br>
-            ภาคเรียนที่ <?php echo $termSelect ?> ปีการศึกษา <?php echo Years($year); ?>
-            </p>
         </div>
-        <br>
-        <h5 class="text-center">สถิติ</h5>
-        <p class="text-center">วันที่ <?php echo convertToThaiDate(date('Y-m-d')); ?></p>
-        <div class="d-flex justify-content-center">
-            <canvas id="userChart" width="900" height="300"></canvas>
-        </div>
-        <script>
-            const labels = <?php echo $subjectName; ?>;
-            const data = {
-                labels: labels,
-                datasets: [{
+    <?php } elseif ($usertype == 'user') { ?>
+        <!-- USER PAGE -->
+        <div class="container m-2 p-4 border rounded-3" style="height: auto; width: 100%">
+            <h5>หน้าหลัก</h5>
+            <hr>
+            <div class="d-flex justify-content-between">
+                <p>สถิติแต่ละวันและวิชาในแต่ละวัน <br>
+                    ภาคเรียนที่ <?php echo $termSelect ?> ปีการศึกษา <?php echo Years($year); ?>
+                </p>
+            </div>
+            <br>
+            <h5 class="text-center">สถิติ</h5>
+            <p class="text-center">วันที่ <?php echo convertToThaiDate(date('Y-m-d')); ?></p>
+            <div class="d-flex justify-content-center">
+                <canvas id="userChart" width="900" height="300"></canvas>
+            </div>
+            <script>
+                const labels = <?php echo $subjectName; ?>;
+                const data = {
+                    labels: labels,
+                    datasets: [{
                         label: 'ขาดเรียน',
                         data: <?php echo $miss ?>,
                         borderColor: 'rgb(245, 75, 75)',
@@ -983,36 +997,36 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                         borderColor: 'rgb(75, 75, 245)',
                         backgroundColor: 'rgb(137, 137, 250)',
                     }
-                ]
-            };
+                    ]
+                };
 
 
-            const UserCheckConfig = {
-                type: 'bar',
-                data: data,
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        title: {
-                            display: true,
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            min: 0,
-                            max: 40,
-                            ticks: {
-                                stepSize: 10
+                const UserCheckConfig = {
+                    type: 'bar',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                min: 0,
+                                max: 40,
+                                ticks: {
+                                    stepSize: 10
+                                }
                             }
                         }
                     }
-                }
-            };
-            const chart = new Chart(document.getElementById('userChart'), UserCheckConfig);
-        </script>
-    <?php } ?>
+                };
+                const chart = new Chart(document.getElementById('userChart'), UserCheckConfig);
+            </script>
+        <?php } ?>
 </body>
 
 </html>
@@ -1020,7 +1034,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
 <script src="assets/js/wanting.js"></script>
 <script>
     // run user form select branch
-    $(document).on("change", '#branch', function() {
+    $(document).on("change", '#branch', function () {
         let branchID = $(this).val();
         let formData = new FormData();
         let $users = $('#user');
@@ -1034,11 +1048,11 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
             contentType: false,
             processData: false,
             dataType: "json",
-            success: function(data) {
+            success: function (data) {
                 // console.log(data);
 
                 $users.empty().append('<option value="" selected disabled>-- เลือกผู้ใช้ --</option>');
-                $.each(data, function(index, user) {
+                $.each(data, function (index, user) {
                     $users.append(
                         '<option value="' + user.id + '">' + user.username + '</option>'
                     );
