@@ -306,10 +306,12 @@ if($usertype === 'user'){
                                 <div class="row">
                                     <div class="col-4 mb-3">
                                         <label for="">รหัสวิชา</label>
-                                        <select name="subjectID" id="subjectID" class="form-select" required>
+                                        <select name="subjectID" id="subjectID" class="form-select" required >
                                             <option value="" selected disabled>-- เลือกรหัสวิชา --</option>
                                             <?php
-                                            while($rowID = mysqli_fetch_array($queryS)){?>
+                                            $sqlSubjectID = "SELECT id , subID FROM subject WHERE userID = $userid";
+                                            $querySubjectId = mysqli_query($conn, $sqlSubjectID);
+                                            while($rowID = mysqli_fetch_array($querySubjectId)){?>
                                                 <option value="<?php echo $rowID['id'] ?>"><?php echo $rowID['subID'] ?></option>
                                             <?php } ?>
                                         </select>
@@ -319,8 +321,9 @@ if($usertype === 'user'){
                                         <select name="subjectName" id="subjectName" class="form-select" required>
                                             <option value="" selected disabled>-- เลือกชื่อวิชา --</option>
                                             <?php 
-                                            mysqli_data_seek($queryS, 0);
-                                            while($rowName = mysqli_fetch_array($queryS)){ ?>
+                                            $sqlSubjectName = "SELECT id , name FROM subject WHERE userID = $userid";
+                                            $querySubjectName = mysqli_query($conn, $sqlSubjectName);
+                                            while($rowName = mysqli_fetch_array($querySubjectName)){ ?>
                                                 <option value="<?php echo $rowName['name'] ?>"><?php echo $rowName['name'] ?></option>
                                             <?php } ?>
                                         </select>
