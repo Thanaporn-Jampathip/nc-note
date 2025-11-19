@@ -2,6 +2,9 @@
 session_start();
 include './backend/db.php';
 
+unset($_SESSION['week']);
+unset($_SESSION['term']);
+
 $userid = $_SESSION['userid'];
 $user = $_SESSION['user'];
 if (!isset($_SESSION['user'])) {
@@ -114,15 +117,16 @@ $queryData = mysqli_query($conn, $sqlData);
         overflow-x: hidden;
     }
 
-    @media only screen and (min-width: 576px){
+    @media only screen and (min-width: 576px) {
         .form {
-        display: flex;
-        align-items: flex-end; 
-        gap: 0.5rem;           
-        flex-wrap: wrap;        
-    }
+            display: flex;
+            align-items: flex-end;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
 
     }
+
     @media only screen and (max-width: 576px) {
         .topic {
             display: flex;
@@ -178,7 +182,7 @@ $queryData = mysqli_query($conn, $sqlData);
                 <div class="form">
                     <form method="get" action="" id="searchDataFromWeekTerm" class="mb-3">
                         <div class="search d-flex justify-content-center mb-3">
-                            <!-- Select Week --> 
+                            <!-- Select Week -->
                             <div class="weeks_topic text-center ms-auto pe-2">
                                 <label for="" class="form-label">สัปดาห์</label>
                                 <select name="weeks" class="form-select" style="width: auto" id="weeks" required>
@@ -207,23 +211,18 @@ $queryData = mysqli_query($conn, $sqlData);
                     <?php
                     $week = $_GET['weeks'] ?? null;
                     $term = $_GET['terms'] ?? null;
+
                     if ($week && $term) {
-                        $_SESSION['week'] = $week;
-                        $_SESSION['term'] = $term;
-                    }
-                    if ($_SESSION['week'] && $_SESSION['term']) {
-                        $weeks = $_SESSION['week'] ?? null;
-                        $terms = $_SESSION['term'] ?? null;
                         ?>
-                        <!-- form วันที่ -->
                         <div class="my-3">
                             <form action="" method="get" class="w-100">
-                                <label for="" class="form-label d-flex justify-content-center">วันที่</label>
-                                <select name="date" id="" class="form-select" required>
-                                    <option value="" selected dissable>-- เลือก --</option>
+                                <label class="form-label d-flex justify-content-center">วันที่</label>
+                                <select name="date" class="form-select" required>
+                                    <option value="" selected disabled>-- เลือก --</option>
                                     <?php
-                                    $sqlFitterDate = "SELECT DISTINCT date FROM record WHERE week = '$weeks' AND term = '$terms'";
+                                    $sqlFitterDate = "SELECT DISTINCT date FROM record WHERE week = '$week' AND term = '$term'";
                                     $queryFitterDate = mysqli_query($conn, $sqlFitterDate);
+
                                     while ($rowDate = mysqli_fetch_array($queryFitterDate)) {
                                         ?>
                                         <option value="<?php echo $rowDate['date'] ?>">
@@ -231,11 +230,15 @@ $queryData = mysqli_query($conn, $sqlData);
                                         </option>
                                     <?php } ?>
                                 </select>
-                                <button class="btn btn-sm btn-primary w-100 mt-3" name="searchDate"
-                                    type="submit">ค้นหา</button>
+
+                                <button class="btn btn-sm btn-primary w-100 mt-3" name="searchDate" type="submit">
+                                    ค้นหา
+                                </button>
                             </form>
                         </div>
-                    <?php } ?>
+                        <?php
+                    }
+                    ?>
                 </div>
             </div>
 
