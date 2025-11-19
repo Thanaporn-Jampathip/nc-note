@@ -202,7 +202,7 @@ $queryData = mysqli_query($conn, $sqlData);
                             </div>
                         </div>
                         <button type="submit" name="search"
-                            class="searchWeekTerm btn btn-primary btn-sm w-100">ค้นหา</button>
+                            class="searchWeekTerm btn btn-primary btn-sm w-100">ค้นหาเฉพาะสัปดาห์และเทอม</button>
                     </form>
                     <?php
                     $week = $_GET['weeks'] ?? null;
@@ -212,8 +212,8 @@ $queryData = mysqli_query($conn, $sqlData);
                         $_SESSION['term'] = $term;
                     }
                     if ($_SESSION['week'] && $_SESSION['term']) {
-                        $weeks = $_SESSION['week'];
-                        $terms = $_SESSION['term'];
+                        $weeks = $_SESSION['week'] ?? null;
+                        $terms = $_SESSION['term'] ?? null;
                         ?>
                         <!-- form วันที่ -->
                         <div class="my-3">
