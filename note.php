@@ -622,6 +622,11 @@ if($usertype === 'user'){
                                                 </div>
                                             </div>        
                                         </div>
+                                        <!-- ถ้ามีชื่อนักเรียนขาด -->
+                                        <div class="mb-3">
+                                            <label for="">รายชื่อนักเรียนที่ขาดเรียน<br><span style="font-size: 14px; color: gray;">(หากเผลอใส่ในวันที่มาเรียนครบ กรอกคำว่า <span style="color: red;">"ไม่มี"</span> )</span></label>
+                                            <input type="int" value="<?php echo $rowN['missStudentName'] ?>" name="missStudentName" class="form-control">
+                                        </div>
                                         <div class="mb-3">
                                             <div class="row">
                                                 <div class="col">
@@ -652,11 +657,6 @@ if($usertype === 'user'){
                                                     </select>
                                                 </div>                                                    
                                             </div>
-                                        </div>
-                                        <!-- ถ้ามีชื่อนักเรียนขาด -->
-                                        <div class="mb-3">
-                                            <label for="">รายชื่อนักเรียนที่ขาดเรียน<br><span style="font-size: 14px; color: gray;">(หากเผลอใส่ในวันที่มาเรียนครบ กรอกคำว่า <span style="color: red;">"ไม่มี"</span> )</span></label>
-                                            <input type="int" value="<?php echo $rowN['missStudentName'] ?>" name="missStudentName" class="form-control">
                                         </div>
                                         <!-- ถ้ามีการสอนแทน -->
                                         <?php
