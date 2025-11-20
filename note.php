@@ -304,15 +304,19 @@ if($usertype === 'user'){
                             <div class="modal-body">
                                 <input type="hidden" value="<?php echo $rowU['id'] ?>" id="userID">
                                 <div class="row">
-                                    <div class="col-4 mb-3">
+                                    <div class="col mb-3">
                                         <label for="">รหัสวิชา</label>
-                                        <select name="subjectID" id="subjectID" class="form-select" required >
+                                        <select name="subjectID" id="subjectID" class="form-select" required>
                                             <option value="" selected disabled>-- เลือกรหัสวิชา --</option>
                                             <?php
-                                            $sqlSubjectID = "SELECT id , subID FROM subject WHERE userID = $userid";
-                                            $querySubjectId = mysqli_query($conn, $sqlSubjectID);
-                                            while($rowID = mysqli_fetch_array($querySubjectId)){?>
-                                                <option value="<?php echo $rowID['id'] ?>"><?php echo $rowID['subID'] ?></option>
+                                            $sqlSubject = "SELECT id, subID, name FROM subject WHERE userID = $userid";
+                                            $querySubject = mysqli_query($conn, $sqlSubject);
+                                            while($row = mysqli_fetch_array($querySubject)){?>
+                                                <option value="<?php echo $row['id'] ?>" 
+                                                        data-name="<?php echo htmlspecialchars($row['name']) ?>"
+                                                        data-subid="<?php echo htmlspecialchars($row['subID']) ?>">
+                                                    <?php echo $row['subID'] ?>
+                                                </option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -321,10 +325,13 @@ if($usertype === 'user'){
                                         <select name="subjectName" id="subjectName" class="form-select" required>
                                             <option value="" selected disabled>-- เลือกชื่อวิชา --</option>
                                             <?php 
-                                            $sqlSubjectName = "SELECT id , name FROM subject WHERE userID = $userid";
-                                            $querySubjectName = mysqli_query($conn, $sqlSubjectName);
-                                            while($rowName = mysqli_fetch_array($querySubjectName)){ ?>
-                                                <option value="<?php echo $rowName['name'] ?>"><?php echo $rowName['name'] ?></option>
+                                            mysqli_data_seek($querySubject, 0); // reset pointer
+                                            while($row = mysqli_fetch_array($querySubject)){ ?>
+                                                <option value="<?php echo htmlspecialchars($row['name']) ?>" 
+                                                        data-id="<?php echo $row['id'] ?>"
+                                                        data-subid="<?php echo htmlspecialchars($row['subID']) ?>">
+                                                    <?php echo $row['name'] ?>
+                                                </option>
                                             <?php } ?>
                                         </select>
                                     </div>
@@ -550,11 +557,16 @@ if($usertype === 'user'){
                                                 <label for="">รหัสวิชา</label>
                                                 <select name="editSubID" id="editSubID" class="form-control">
                                                     <?php 
-                                                    $sql = "SELECT id,subID FROM subject WHERE userID = $userid";
+                                                    $subjects = [];
+                                                    $sql = "SELECT id, subID, name FROM subject WHERE userID = $userid";
                                                     $query = mysqli_query($conn, $sql);
-                                                    while($rowSubID = mysqli_fetch_assoc($query)){ ?>
-                                                        <option value="<?php echo $rowSubID['id'] ?>"<?php if($rowN['subjectID'] == $rowSubID['subID']) echo ' selected'; ?>>
-                                                            <?php echo $rowSubID['subID']; ?>
+                                                    while($row = mysqli_fetch_assoc($query)){ 
+                                                        $subjects[] = $row;
+                                                    ?>
+                                                        <option value="<?php echo $row['id'] ?>" 
+                                                                data-name="<?php echo htmlspecialchars($row['name']) ?>"
+                                                                <?php if($rowN['subjectID'] == $row['subID']) echo 'selected'; ?>>
+                                                            <?php echo $row['subID']; ?>
                                                         </option>
                                                     <?php } ?>
                                                 </select>
@@ -565,10 +577,12 @@ if($usertype === 'user'){
                                                 <label for="">ชื่อรายวิชา</label>
                                                 <select name="editSubName" id="editSubName" class="form-control">
                                                     <?php 
-                                                    $sql = "SELECT name FROM subject WHERE userID = $userid";
-                                                    $query = mysqli_query($conn, $sql);
-                                                    while($rowSubName = mysqli_fetch_assoc($query)){?>
-                                                        <option value="<?php echo $rowSubName['name'] ?>"<?php if($rowN['subjectName'] == $rowSubName['name']) echo 'selected'; ?>><?php echo $rowSubName['name'] ?></option>
+                                                    foreach($subjects as $row){ ?>
+                                                        <option value="<?php echo htmlspecialchars($row['name']) ?>" 
+                                                                data-id="<?php echo $row['id'] ?>"
+                                                                <?php if($rowN['subjectName'] == $row['name']) echo 'selected'; ?>>
+                                                            <?php echo $row['name'] ?>
+                                                        </option>
                                                     <?php } ?>
                                                 </select>
                                             </div>
@@ -854,6 +868,62 @@ function loadTeachers(branchID, $teacherSelect) {
         }
     });
 }
+// MODAL ADD --------------------------------------------------------------------------
+// เมื่อเลือกรหัสวิชา -> auto select ชื่อวิชา 
+document.getElementById('subjectID').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const subjectName = selectedOption.getAttribute('data-name');
+    
+    // หา option ที่ตรงกันใน select ชื่อวิชา
+    const subjectNameSelect = document.getElementById('subjectName');
+    for(let i = 0; i < subjectNameSelect.options.length; i++) {
+        if(subjectNameSelect.options[i].value === subjectName) {
+            subjectNameSelect.selectedIndex = i;
+            break;
+        }
+    }
+});
+
+// เมื่อเลือกชื่อวิชา -> auto select รหัสวิชา 
+document.getElementById('subjectName').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const subjectId = selectedOption.getAttribute('data-id');
+    
+    // หา option ที่ตรงกันใน select รหัสวิชา
+    const subjectIDSelect = document.getElementById('subjectID');
+    for(let i = 0; i < subjectIDSelect.options.length; i++) {
+        if(subjectIDSelect.options[i].value === subjectId) {
+            subjectIDSelect.selectedIndex = i;
+            break;
+        }
+    }
+});
+// ---------------------------------------------------------------------------------------
+
+// MODAL EDIT --------------------------------------------------------------------------
+// เมื่อเลือกรหัสวิชา -> auto select ชื่อวิชา
+document.getElementById('editSubID').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const subjectName = selectedOption.getAttribute('data-name');
+    
+    const subjectNameSelect = document.getElementById('editSubName');
+    for(let i = 0; i < subjectNameSelect.options.length; i++) {
+        if(subjectNameSelect.options[i].value === subjectName) {
+            subjectNameSelect.selectedIndex = i;
+            break;
+        }
+    }
+});
+
+// เมื่อเลือกชื่อวิชา -> auto select รหัสวิชา
+document.getElementById('editSubName').addEventListener('change', function() {
+    const selectedOption = this.options[this.selectedIndex];
+    const subjectId = selectedOption.getAttribute('data-id');
+    
+    const subjectIDSelect = document.getElementById('editSubID');
+    subjectIDSelect.value = subjectId;
+});
+// ---------------------------------------------------------------------------------------
 </script>
 <?php
 if(isset($_POST['delete'])) {
