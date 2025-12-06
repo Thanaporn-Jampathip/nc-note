@@ -378,39 +378,5 @@ if(isset($_POST['deleteSubject'])){
     
     $sql = "DELETE FROM subject WHERE id = $id";
     $query = mysqli_query($conn,$sql);
-    
-    // if($query){
-    //     echo '<script>
-    //         Swal.fire({
-    //         title: "ลบสำเร็จ",
-    //         icon: "success",
-    //         confirmButtonText: "ปิด",
-    //         draggable: true
-    //         }).then(() =>{
-    //             window.location.href="subject.php"
-    //         })
-    //     </script>';
-    // }else{
-    //         echo '<script>
-    //         Swal.fire({
-    //         title: "ลบไม่สำเร็จ",
-    //         icon: "error",
-    //         confirmButtonText: "ปิด",
-    //         draggable: true
-    //         }).then(() =>{
-    //             window.location.href="subject.php";
-    //         })
-    //     </script>';
-    //     }
 }
-// ถ้ามีการเปลี่ยนเทอม จะทำการลบข้อมูลของเทอมเก่าออกทั้งหมด แล้วต้องกรอกรายวิชาใหม่ทั้งหมด
-// ลบเทอมก่อน
-// if($term == '2'){
-//    $sqlDeleteTerm1 = "DELETE FROM record WHERE term = '1'";
-//    mysqli_query($conn, $sqlDeleteTerm1);
-// }elseif($term == '1'){
-//    $sqlDeleteTerm2 = "DELETE FROM record WHERE term = '2'";
-//    mysqli_query($conn, $sqlDeleteTerm2);
-// }
-
  ?>
