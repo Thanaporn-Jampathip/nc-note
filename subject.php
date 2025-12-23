@@ -65,8 +65,9 @@ if ($term >= 5 && $term <= 9) {
                         <div class="mb-3 d-flex gap-2 ms-auto">
                             <button type="button" name="add" class="btn btn-success " data-bs-toggle="modal"
                                 data-bs-target="#addFormModal">เพิ่ม</button>
-                            <form action="" method="post">
-                                <button type="submit" name="deleteAllSubject" class="btn btn-danger "
+                                <!-- button delete subject -->
+                            <form action="./backend/deleteAllSubject.php" method="post">
+                                <button type="submit" name="deleteAllSubject" class="btn btn-danger"
                                     onclick="return confirm('ต้องการลบรายวิชาทั้งหมดหรือไม่?');">
                                     <i class="bi bi-trash-fill"></i>
                                     ลบรายวิชาทั้งหมด</button>
