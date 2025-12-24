@@ -16,11 +16,11 @@ include './backend/db.php';
     <style>
         @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai+Looped:wght@100;200;300;400;500;600;700&family=IBM+Plex+Sans+Thai:wght@100;200;300;400;500;600;700&family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
 
-        body, html {
+        body,
+        html {
             font-family: "Prompt", sans-serif;
             background: linear-gradient(to bottom right, #0457f1ff, #A8EFFF);
-            max-height: 100%;
-            height: 100vh;
+            min-height: 100vh;
             color: white;
         }
 
@@ -51,7 +51,7 @@ include './backend/db.php';
 </head>
 
 <body>
-    <div class="container">
+    <div class="container min-h-screen">
         <img src="image/logo_nvc.png" alt="วิทยาลัยอาชีวศึกษานครปฐม" class="rounded mx-auto d-block my-3">
         <h5 class="head">วิทยาลัยอาชีวศึกษานครปฐม</h5>
         <h5 class="head">ภาคเรียนที่ 1 ปีการศึกษา 2568</h5>

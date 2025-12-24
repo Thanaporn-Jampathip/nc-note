@@ -18,7 +18,7 @@
         body, html {
             font-family: "Prompt", sans-serif;
             background: linear-gradient(to bottom right, #0457f1ff, #A8EFFF);
-            height: 100vh;
+            min-height: 100vh;
             color: white;
         }
         .head{
@@ -45,7 +45,7 @@
     </style>
 </head>
 <body>
-    <div class="container ">
+    <div class="container min-h-screen">
         <img src="image/logo_nvc.png" alt="วิทยาลัยอาชีวศึกษานครปฐม" class="rounded mx-auto d-block my-3">
         <h5 class="head">วิทยาลัยอาชีวศึกษานครปฐม</h5>
         <h5 class="head">ภาคเรียนที่ 1 ปีการศึกษา 2568</h5>
