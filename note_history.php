@@ -95,7 +95,7 @@ $sqlData = "
     JOIN subject ON record.subject_id = subject.id
     JOIN teacher ON subject.teacher_id = teacher.id
     LEFT JOIN teacher t2 ON record.insteadTeacher = t2.id
-    WHERE record.date = '$Date'
+    WHERE record.date = '$Date' AND record.user_id = '$userid'
     ORDER BY record.id DESC
 ";
 $queryData = mysqli_query($conn, $sqlData);
