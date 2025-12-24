@@ -165,6 +165,11 @@ if($usertype === 'user'){
             <div class="d-flex justify-content-between">
                 <p>บันทึกการเรียน / การสอน ประจำสัปดาห์<br>
                 ภาคเรียนที่ <?php echo $term ?> ปีการศึกษา <?php echo Years($year); ?></p>
+                
+                <div>
+                    
+                    <button class="bg-danger"></button>
+                </div>
             </div>
             <h6 class="text-center">ประวัติรายการบันทึกประจำสัปดาห์</h6><br>
             <div class="card p-4 border rounded-3 shadow-sm w-100">
@@ -280,7 +285,7 @@ if($usertype === 'user'){
     </div>
 <?php }elseif ($usertype == 'user'){ ?>
     <!-- USER PAGE -->
-    <div class="container m-2 p-4 border rounded-3"style="height: auto;">
+    <div class="container-fluid m-2 p-4 border rounded-3"style="height: auto; width: 100%;">
         <h5>บันทึกการเรียน / การสอน</h5>
         <hr>
         <div class="d-flex justify-content-between">

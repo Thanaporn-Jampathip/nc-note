@@ -225,21 +225,19 @@ if (isset($_GET['weekChart'])) {
         $dataWeek[] = $rowWeek;
     }
 
-    $usernameChart = $dataWeek[0]['username'] ?? '';
+    $usernameChart = !empty($dataWeek) && isset($dataWeek[0]['username']) ? $dataWeek[0]['username'] : '';
 
     $dataLables = [];
     $miss = [];
     $all = [];
+    $total = [];
+
     foreach ($dataWeek as $week) {
         $dataLables[] = convertToThaiDate($week['date']);
         $miss[] = $week['miss'];
         $all[] = $week['all_student'];
         $total[] = $week['all_student'] - $week['miss'];
     }
-    $total[] = $week['all_student'] - $week['miss'];
-    $total = array_map(function ($miss, $all) {
-        return $all - $miss;
-    }, $miss, $all);
 
     $ShowLabels = json_encode($dataLables ?? []);
     $missStudent = json_encode($miss ?? []);
@@ -309,7 +307,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
 
     // ถ้ายังไม่มี weekBranch ให้ดึงสัปดาห์ล่าสุด
     if (!isset($_GET['weekBranch']) || empty($_GET['weekBranch'])) {
-        $sqlLatestWeek = "SELECT MAX(week) as latestWeek FROM record";
+        $sqlLatestWeek = "SELECT MAX(week) as latestWeek FROM record ORDER BY week DESC";
         $resultLatest = mysqli_query($conn, $sqlLatestWeek);
         $weekBranch = 0;
         if ($row = mysqli_fetch_assoc($resultLatest)) {
@@ -634,7 +632,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                                     <option value="" disabled <?php echo empty($weekBranch) ? 'selected' : ''; ?>>-- เลือก --
                                     </option>
                                     <?php
-                                    $sqlWeeks = "SELECT DISTINCT week FROM record ORDER BY week DESC";
+                                    $sqlWeeks = "SELECT DISTINCT week FROM record ORDER BY CAST(week AS UNSIGNED) DESC";
                                     $resultWeeks = mysqli_query($conn, $sqlWeeks);
                                     while ($rowWeek = mysqli_fetch_assoc($resultWeeks)) {
                                         $week = $rowWeek['week'];
@@ -736,7 +734,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                                         onchange="this.form.submit()">
                                         <option value="" selected disabled>เลือกดูรายสัปดาห์</option>
                                         <?php
-                                        $sql = "SELECT DISTINCT week FROM record WHERE user_id = $userID ORDER by record.week DESC";
+                                        $sql = "SELECT DISTINCT week FROM record WHERE user_id = $userID ORDER by CAST(record.week AS UNSIGNED) DESC";
                                         $query = mysqli_query($conn, $sql);
                                         while ($row = mysqli_fetch_array($query)) {
                                             ?>
@@ -961,7 +959,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
         </div>
     <?php } elseif ($usertype == 'user') { ?>
         <!-- USER PAGE -->
-        <div class="container m-2 p-4 border rounded-3" style="height: auto; width: 100%">
+        <div class="container-fluid m-2 p-4 border rounded-3" style="height: auto; width: 100%">
             <h5>หน้าหลัก</h5>
             <hr>
             <div class="d-flex justify-content-between">

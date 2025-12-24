@@ -73,7 +73,7 @@ $stmtNote->execute();
 $queryN = $stmtNote->get_result();
 
 // ดึงข้อมูลสัปดาห์ที่มีบันทึก
-$sqlWeekTerm = "SELECT DISTINCT week, term FROM record WHERE user_id = ? AND record.term = ? ORDER BY record.week + 0 ASC";
+$sqlWeekTerm = "SELECT DISTINCT week, term FROM record WHERE user_id = ? AND record.term = ? ORDER BY CAST(record.week AS UNSIGNED) DESC";
 $stmtWeekTerm = $conn->prepare($sqlWeekTerm);
 $stmtWeekTerm->bind_param("ii", $userid, $term);
 $stmtWeekTerm->execute();
@@ -172,7 +172,7 @@ $queryData = mysqli_query($conn, $sqlData);
             include './component/sidebar_user.php';
         }
         ?>
-        <div class="container m-2 p-4 border rounded-3" style="height: auto; width: 100%">
+        <div class="container-fluid m-2 p-4 border rounded-3" style="height: auto; width: 100%">
             <h5>ประวัติบันทึกการเรียน / การสอน</h5>
             <hr>
             <div class="topic d-flex justify-content-between">
