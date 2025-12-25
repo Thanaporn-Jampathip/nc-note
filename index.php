@@ -165,16 +165,19 @@ if ($termSelect >= 5 && $termSelect <= 9) {
 if (isset($_GET['user'])) {
     $userID = $_GET['user'];
 
-    $sql = "SELECT r.date, r.miss,r.missStudentName,r.all_student,r.note , subject.id AS subjectID, subject.subID AS SubID, subject.name AS subjectName, user.username AS username, user.id AS uesrid, teacher.name AS teacherName, t2.name AS insteadTeacherName
+
+    $sql = "
+    SELECT 
+    r.week, r.term, u.username as username, r.begin_period, r.end_period, r.date, r.week , r.note, r.miss, r.missStudentName, r.all_student , r.term,
+    t.name as teacherName, 
+    s.subID as subjectID, s.name as subjectName
     FROM record r
-    JOIN subject ON r.subject_id = subject.id
-    JOIN user ON r.user_id = user.id
-    JOIN teacher ON subject.teacher_id = teacher.id
-    LEFT JOIN teacher t2 ON r.insteadTeacher = t2.id
-    WHERE r.user_id = $userID
-    AND r.date = CURDATE()
-    AND r.term = $termSelect
-    ORDER BY r.id ASC";
+    JOIN user u ON r.user_id = u.id
+    LEFT JOIN subject s ON r.subject_id = s.id
+    LEFT JOIN teacher t ON r.insteadTeacher = t.id
+    WHERE r.user_id = '$userID' AND r.date = CURDATE() 
+    ORDER BY r.id ASC
+    ";
     $query = mysqli_query($conn, $sql);
 
     $dataToday = [];
@@ -205,15 +208,15 @@ if (isset($_GET['user'])) {
 if (isset($_GET['weekChart'])) {
     list($week, $userID) = explode(' ', $_GET['weekChart']);
 
-    $sqlWeek = "SELECT r.date,r.miss,r.missStudentName, r.all_student,r.week, u.username, teacher.name AS teacherName
+    $sqlWeek = "
+    SELECT 
+    r.date,r.miss,r.missStudentName, r.all_student,r.week, u.username
     FROM record r
-    JOIN subject on r.subject_id = subject.id
-    JOIN teacher ON subject.teacher_id = teacher.id
     JOIN user u ON r.user_id = u.id
     JOIN (
         SELECT record.date, MAX(record.id) AS max_id
         FROM record
-        WHERE record.user_id = '$userID' AND record.week = '$week' AND record.term = $termSelect
+        WHERE record.user_id = '$userID' AND record.week = '$week' 
         GROUP BY record.date
     ) latest
     ON r.id = latest.max_id
@@ -586,10 +589,12 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                 <div class="d-flex">
                     <div class="d-flex ms-auto">
                         <div class="d-block">
+                            <!-- เลือกสาขา -->
                             <form method="get" action="./backend/dataBranch.php" class="ps-2">
                                 <select name="branch" id="branch" class="form-select">
                                     <option value="" selected disabled>-- เลือกสาขา --</option>
                                     <?php
+                                    // เอาทุกสาขายกเว้น สามัญ
                                     $sql = "SELECT * FROM branch WHERE name != 'สามัญสัมพันธ์'";
                                     $query = mysqli_query($conn, $sql);
                                     while ($row = mysqli_fetch_array($query)) {
@@ -861,7 +866,7 @@ if (isset($_GET['id']) || isset($_GET['weekBranch'])) {
                                 $comeStudent = $rowDetail['all_student'] - $rowDetail['miss']; ?>
                                 <tr>
                                     <td><?php echo convertToThaiDate($rowDetail['date']); ?></td>
-                                    <td><?php echo $rowDetail['SubID'] ?></td>
+                                    <td><?php echo $rowDetail['subjectID'] ?></td>
                                     <td><?php echo $rowDetail['subjectName'] ?></td>
                                     <td><?php echo $rowDetail['teacherName'] ?></td>
                                     <td><?php echo $rowDetail['miss'] ?></td>

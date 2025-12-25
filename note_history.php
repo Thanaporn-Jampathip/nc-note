@@ -268,8 +268,8 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                         if (isset($_GET['search'])) {
                             $selectWeek = $_GET['weeks'];
                             $selectTerm = $_GET['terms'];
-                            //Check Date With Week and Term
-                            $sqlCheck = "
+                            
+                            $sqlWeekAndTerm = "
                             SELECT 
                             r.week, r.term, u.username as username, r.begin_period, r.end_period, r.date, r.week , r.note, r.miss, r.missStudentName, r.all_student , r.term,
                             t.name as teacherName, 
@@ -281,7 +281,7 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                             WHERE r.term = '$selectTerm' AND r.week = '$selectWeek'
                             ORDER BY r.id DESC
                             ";
-                            $queryDataWeekAndTerm = mysqli_query($conn, $sqlCheck);
+                            $queryDataWeekAndTerm = mysqli_query($conn, $sqlWeekAndTerm);
                             if (mysqli_num_rows($queryDataWeekAndTerm) > 0) {
                                 while ($rowDataWeekAndTerm = mysqli_fetch_assoc($queryDataWeekAndTerm)) {
                                     // if (
