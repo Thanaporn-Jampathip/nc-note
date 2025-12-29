@@ -51,54 +51,12 @@ if ($term >= 5 && $term <= 9) {
     $term = 2;
 }
 
-// // ดึงข้อมูลบันทึกทั้งหมดของผู้ใช้
-// $sqlNote = "
-//     SELECT record.id, record.begin_period,record.term,record.missStudentName, record.insteadTeacher,
-//            record.end_period, record.date, record.week,record.miss,record.all_student, record.note,
-//            teacher.name AS teacherName, user.username AS username,
-//            subject.subID AS subjectID, subject.name AS subjectName,
-//            t2.name AS insteadTeacherName, teacher.id AS teacherID
-//     FROM record r
-//     JOIN user u ON r.user_id = u.id
-//     JOIN subject s ON r.subject_id = s.id
-//     JOIN teacher t ON s.teacher_id = t.id
-//     LEFT JOIN teacher t2 ON r.insteadTeacher = t2.id
-//     WHERE r.user_id = ?
-//     ORDER BY record.id DESC
-// ";
-
-// $stmtNote = $conn->prepare($sqlNote);
-// $stmtNote->bind_param("i", $userid);
-// $stmtNote->execute();
-// $queryN = $stmtNote->get_result();
-
 // ดึงข้อมูลสัปดาห์ที่มีบันทึก
 $sqlWeekTerm = "SELECT DISTINCT week, term FROM record WHERE user_id = ? AND record.term = ? ORDER BY CAST(record.week AS UNSIGNED) DESC";
 $stmtWeekTerm = $conn->prepare($sqlWeekTerm);
 $stmtWeekTerm->bind_param("ii", $userid, $term);
 $stmtWeekTerm->execute();
 $queryWeekTerm = $stmtWeekTerm->get_result();
-
-// ถึงข้อมูลจากการเลือกวันที่ 
-// $Date = null;
-// if (isset($_GET['searchDate'])) {
-//     $Date = $_GET['date'] ?? null;
-// }
-// $sqlData = "
-//     SELECT record.id, record.begin_period,record.term,record.missStudentName, record.insteadTeacher,
-//            record.end_period, record.date, record.week,record.miss,record.all_student, record.note,
-//            teacher.name AS teacherName, user.username AS username,
-//            subject.subID AS subjectID, subject.name AS subjectName,
-//            t2.name AS insteadTeacherName, teacher.id AS teacherID
-//     FROM record r
-//     JOIN user ON record.user_id = user.id
-//     JOIN subject ON record.subject_id = subject.id
-//     JOIN teacher ON subject.teacher_id = teacher.id
-//     LEFT JOIN teacher t2 ON record.insteadTeacher = t2.id
-//     WHERE record.date = '$Date' AND record.user_id = '$userid'
-//     ORDER BY record.id DESC
-// ";
-// $queryData = mysqli_query($conn, $sqlData);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -252,7 +210,7 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                         <th>รหัสวิชา</th>
                         <th>ชื่อวิชา</th>
                         <th>เริ่มคาบ-สุดคาบ</th>
-                        <th class="text-danger">ขาดเรียน</th>
+                        <th class="text-danger">ขqาดเรียน</th>
                         <th class="text-danger">รายชื่อนักเรียนที่ขาดเรียน</th>
                         <th class="text-success">มาทั้งหมด</th>
                         <th>ครูผู้สอน</th>
@@ -268,7 +226,7 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                         if (isset($_GET['search'])) {
                             $selectWeek = $_GET['weeks'];
                             $selectTerm = $_GET['terms'];
-                            
+
                             $sqlWeekAndTerm = "
                             SELECT 
                             r.week, r.term, u.username as username, r.begin_period, r.end_period, r.date, r.week , r.note, r.miss, r.missStudentName, r.all_student , r.term,
@@ -284,44 +242,38 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                             $queryDataWeekAndTerm = mysqli_query($conn, $sqlWeekAndTerm);
                             if (mysqli_num_rows($queryDataWeekAndTerm) > 0) {
                                 while ($rowDataWeekAndTerm = mysqli_fetch_assoc($queryDataWeekAndTerm)) {
-                                    // if (
-                                    //     $rowDataWeekAndTerm['week'] == $selectWeek && $rowDataWeekAndTerm['term'] == $selectTerm
-                                    // ) 
-                                    {
+                                    $missStudent = $rowDataWeekAndTerm['miss'];
+                                    $allStudent = $rowDataWeekAndTerm['all_student'];
+                                    $studentCome = $allStudent - $missStudent;
 
-                                        $missStudent = $rowDataWeekAndTerm['miss'];
-                                        $allStudent = $rowDataWeekAndTerm['all_student'];
-                                        $studentCome = $allStudent - $missStudent;
-
-                                        ?>
-                                        <tr>
-                                            <td><?php echo $rowDataWeekAndTerm['username'] ?></td>
-                                            <td><?php echo $rowDataWeekAndTerm['subjectID'] ?></td>
-                                            <td><?php echo $rowDataWeekAndTerm['subjectName'] ?></td>
-                                            <td><?php echo $rowDataWeekAndTerm['begin_period'] . ' - ' . $rowDataWeekAndTerm['end_period'] ?>
-                                            </td>
-                                            <td><?php echo $rowDataWeekAndTerm['miss'] ?></td>
-                                            <td><?php echo nl2br($rowDataWeekAndTerm['missStudentName']) ?></td>
-                                            <td><?php echo $studentCome ?></td>
-                                            <td><?php echo $rowDataWeekAndTerm['teacherName'] ?></td>
-                                            <td><?php echo convertToThaiDate($rowDataWeekAndTerm['date']); ?></td>
-                                            <td><?php echo $rowDataWeekAndTerm['week'] ?></td>
-                                            <td>
-                                                <?php
-                                                if ($rowDataWeekAndTerm['note'] == 'เข้าสอนปกติ') {
-                                                    echo '<span class="text-success">เข้าสอนปกติ</span>';
-                                                } elseif ($rowDataWeekAndTerm['note'] == 'สอนแทน') {
-                                                    echo '<span class="text-warning">ครูสอนแทน</span><br>';
-                                                    if (!empty($rowDataWeekAndTerm['insteadTeacherName'])) {
-                                                        echo $rowDataWeekAndTerm['insteadTeacherName'];
-                                                    }
+                                    ?>
+                                    <tr>
+                                        <td><?php echo $rowDataWeekAndTerm['username'] ?></td>
+                                        <td><?php echo $rowDataWeekAndTerm['subjectID'] ?></td>
+                                        <td><?php echo $rowDataWeekAndTerm['subjectName'] ?></td>
+                                        <td><?php echo $rowDataWeekAndTerm['begin_period'] . ' - ' . $rowDataWeekAndTerm['end_period'] ?>
+                                        </td>
+                                        <td><?php echo $rowDataWeekAndTerm['miss'] ?></td>
+                                        <td><?php echo nl2br($rowDataWeekAndTerm['missStudentName']) ?></td>
+                                        <td><?php echo $studentCome ?></td>
+                                        <td><?php echo $rowDataWeekAndTerm['teacherName'] ?></td>
+                                        <td><?php echo convertToThaiDate($rowDataWeekAndTerm['date']); ?></td>
+                                        <td><?php echo $rowDataWeekAndTerm['week'] ?></td>
+                                        <td>
+                                            <?php
+                                            if ($rowDataWeekAndTerm['note'] == 'เข้าสอนปกติ') {
+                                                echo '<span class="text-success">เข้าสอนปกติ</span>';
+                                            } elseif ($rowDataWeekAndTerm['note'] == 'สอนแทน') {
+                                                echo '<span class="text-warning">ครูสอนแทน</span><br>';
+                                                if (!empty($rowDataWeekAndTerm['insteadTeacherName'])) {
+                                                    echo $rowDataWeekAndTerm['insteadTeacherName'];
                                                 }
-                                                ?>
-                                            </td>
-                                            <td><?php echo $rowDataWeekAndTerm['term'] . " / " . Years($year); ?></td>
-                                        </tr>
-                                        <?php
-                                    }
+                                            }
+                                            ?>
+                                        </td>
+                                        <td><?php echo $rowDataWeekAndTerm['term'] . " / " . Years($year); ?></td>
+                                    </tr>
+                                    <?php
                                 }
                             } else {
                                 echo '<script>
@@ -350,7 +302,7 @@ $queryWeekTerm = $stmtWeekTerm->get_result();
                         WHERE r.date = '$date' AND r.user_id = '$userid' AND r.week = '$week'
                         ORDER BY r.id DESC
                         ";
-                        $queryDate = mysqli_query($conn,$sqlDateByDate);
+                        $queryDate = mysqli_query($conn, $sqlDateByDate);
 
                         while ($rowDate = mysqli_fetch_array($queryDate)) {
                             $missStudent = $rowDate['miss'];

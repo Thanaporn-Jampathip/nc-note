@@ -14,7 +14,7 @@ FROM subject s
 JOIN teacher t ON s.teacher_id = t.id
 WHERE s.userID = '$userid'
 ";
-$querySubject = mysqli_query($conn,$sqlSubject);
+$querySubject = mysqli_query($conn, $sqlSubject);
 
 $sqlTeacher = "SELECT teacher.id, CONCAT(teacher.name, ' ' ,teacher.lastname) AS teacher FROM teacher";
 $queryTeacher = mysqli_query($conn, $sqlTeacher);
@@ -44,6 +44,55 @@ if ($term >= 5 && $term <= 9) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
     <title>บันทึกการเรียน / สอน - รายวิชา</title>
     <style>
+        html,
+        body {
+            overflow-x: hidden;
+        }
+
+        @media only screen and (min-width: 576px) {
+            .form {
+                display: flex;
+                align-items: flex-end;
+                gap: 0.5rem;
+                flex-wrap: wrap;
+            }
+
+        }
+
+        @media only screen and (max-width: 576px) {
+            .topic {
+                display: flex;
+                flex-direction: column;
+            }
+
+            .weeks_topic {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+
+            .weeks_topic form {
+                width: 100%;
+            }
+
+            .weeks_topic form select {
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .weeks_topic select {
+                width: 100% !important;
+            }
+
+            .searchWeekTerm {
+                margin-top: 2;
+            }
+        }
+
+
+        table tr {
+            white-space: nowrap;
+        }
+
         h5 a {
             text-decoration: none;
         }
@@ -85,13 +134,13 @@ if ($term >= 5 && $term <= 9) {
                                 <div class="modal-body">
                                     <div class="mb-3">
                                         <label for="">รหัสวิชา</label>
-                                        <input type="text" class="form-control" placeholder="กรอกรหัสวิชา" name="subjectID"
-                                            required>
+                                        <input type="text" class="form-control" placeholder="กรอกรหัสวิชา"
+                                            name="subjectID" required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="">ชื่อวิชา</label>
-                                        <input type="text" class="form-control" placeholder="กรอกชื่อวิชา" name="subjectName"
-                                            required>
+                                        <input type="text" class="form-control" placeholder="กรอกชื่อวิชา"
+                                            name="subjectName" required>
                                     </div>
                                     <div class="mb-3">
                                         <div class="row">
@@ -121,24 +170,25 @@ if ($term >= 5 && $term <= 9) {
                                             </div>
                                         </div>
                                     </div>
-                                    <button type="submit" name="addSubject" class="btn btn-success w-100" value="เพิ่ม">เพิ่ม</button>
+                                    <button type="submit" name="addSubject" class="btn btn-success w-100"
+                                        value="เพิ่ม">เพิ่ม</button>
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
             </div>
-
-            <h6 class="text-center">รายวิชาในเทอมนี้</h6><br>
-            <table class="table table-bordered table-sm" width="auto">
-                <tr class="table table-info">
-                    <th>รหัสวิชา</th>
-                    <th>ชื่อวิชา</th>
-                    <th>ครูผู้สอน</th>
-                    <th></th>
-                </tr>
-                <tr>
-                    <?php
+            <div class="table-responsive">
+                <h6 class="text-center">รายวิชาในเทอมนี้</h6><br>
+                <table class="table table-bordered table-sm" width="100%">
+                    <tr class="table table-info">
+                        <th>รหัสวิชา</th>
+                        <th>ชื่อวิชา</th>
+                        <th>ครูผู้สอน</th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <?php
                         while ($row = mysqli_fetch_array($querySubject)) { ?>
 
                             <td><?php echo $row['subjectID'] ?></td>
@@ -178,7 +228,8 @@ if ($term >= 5 && $term <= 9) {
                                                             </div>
                                                             <div class="col">
                                                                 <label for="">เลือกสาขา</label>
-                                                                <select name="" id="" class="form-select branchEdit_Teacher">
+                                                                <select name="" id=""
+                                                                    class="form-select branchEdit_Teacher">
                                                                     <option value="" selected disabled>เลือกสาขา</option>
                                                                     <?php
                                                                     $sqlB = "SELECT * FROM branch";
@@ -216,7 +267,8 @@ if ($term >= 5 && $term <= 9) {
                             </td>
                         </tr>
                     <?php } ?>
-            </table>
+                </table>
+            </div>
         </div>
     </div>
 </body>
