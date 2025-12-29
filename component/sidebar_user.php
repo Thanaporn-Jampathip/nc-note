@@ -100,10 +100,16 @@ $rowNAV = mysqli_fetch_array($queryNav);
                 บันทึกการเรียน
             </a>
         </div>
-        <div class="link mb-3">
+        <div class="link">
             <a href="note_history.php" class="<?= basename($_SERVER['PHP_SELF']) == 'note_history.php' ? 'active' : '' ?>">
                 <ion-icon name="person-outline"></ion-icon>
                 ประวัติการบันทึก
+            </a>
+        </div>
+        <div class="link mb-3">
+            <a href="subject.php" class="<?= basename($_SERVER['PHP_SELF']) == 'subject.php' ? 'active' : '' ?>">
+                <ion-icon name="person-outline"></ion-icon>
+                รายวิชา
             </a>
         </div>
         <div>

@@ -74,11 +74,11 @@ include './backend/db.php';
                 <ion-icon name="person-outline"></ion-icon> ครู
             </a>
         </div>
-        <div class="link">
+        <!-- <div class="link">
             <a href="subject.php" class="<?= basename($_SERVER['PHP_SELF']) == 'subject.php' ? 'active' : '' ?>">
                 <ion-icon name="newspaper-outline"></ion-icon> รายวิชา
             </a>
-        </div>
+        </div> -->
         <div class="link">
             <a href="account.php" class="<?= basename($_SERVER['PHP_SELF']) == 'account.php' ? 'active' : '' ?>">
                 <ion-icon name="people-outline"></ion-icon> บัญชีห้องเรียน

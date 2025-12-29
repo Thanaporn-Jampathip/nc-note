@@ -1,21 +1,20 @@
 <?php
 session_start();
 include 'backend/db.php';
+$userid = $_SESSION['userid'];
 $user = $_SESSION['user'];
 if (!isset($_SESSION['user'])) {
     header('location: login_user.php');
 }
-if (isset($_GET['id'])) {
-    $userID = $_GET['id'];
-    $sql = "SELECT subject.id,subject.subID,subject.name,subject.teacher_id,CONCAT(teacher.name, ' ', teacher.lastname) AS teacherName, user.username AS username
-    FROM subject
-    JOIN user ON subject.userID = user.id
-    JOIN teacher ON subject.teacher_id = teacher.id
-    WHERE user.id = $userID
-    ORDER by id DESC
-    ";
-    $query = mysqli_query($conn, $sql);
-}
+
+// fetch subject from userID
+$sqlSubject = "
+SELECT s.id, s.subID as subjectID , s.name as subjectName, CONCAT(t.name, ' ' ,t.lastname) AS teacherName
+FROM subject s
+JOIN teacher t ON s.teacher_id = t.id
+WHERE s.userID = '$userid'
+";
+$querySubject = mysqli_query($conn,$sqlSubject);
 
 $sqlTeacher = "SELECT teacher.id, CONCAT(teacher.name, ' ' ,teacher.lastname) AS teacher FROM teacher";
 $queryTeacher = mysqli_query($conn, $sqlTeacher);
@@ -40,8 +39,10 @@ if ($term >= 5 && $term <= 9) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>บันทึกการเรียน / สอน - รายวิชา</title>
     <link rel="shortcut icon" href="image/logo_nvc.png" type="image/x-icon">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.26.17/dist/sweetalert2.all.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <title>บันทึกการเรียน / สอน - รายวิชา</title>
     <style>
         h5 a {
             text-decoration: none;
@@ -52,7 +53,7 @@ if ($term >= 5 && $term <= 9) {
 <body>
     <?php include("component/navbar.php") ?>
     <div class="d-flex">
-        <?php include("component/sidebar.php") ?>
+        <?php include("component/sidebar_user.php") ?>
         <div class="container-fluid m-2 p-4 border rounded-3" style="height: auto;">
             <h5>รายวิชา</h5>
             <hr>
@@ -62,24 +63,9 @@ if ($term >= 5 && $term <= 9) {
 
                 <div class="d-flex ms-auto">
                     <div>
-                        <div class="mb-3 d-flex gap-2 ms-auto">
-                            <button type="button" name="add" class="btn btn-success " data-bs-toggle="modal"
-                                data-bs-target="#addFormModal">เพิ่ม</button>
-                                <!-- button delete subject -->
-                            <form action="./backend/deleteAllSubject.php" method="post">
-                                <button type="submit" name="deleteAllSubject" class="btn btn-danger"
-                                    onclick="return confirm('ต้องการลบรายวิชาทั้งหมดหรือไม่?');">
-                                    <i class="bi bi-trash-fill"></i>
-                                    ลบรายวิชาทั้งหมด</button>
-                            </form>
-                        </div>
-                        <div>
-                            <h6>เรียกดูรายวิชาแต่ละห้อง</h6>
-                            <!-- search -->
-                            <form action="./backend/subjectUser.php" method="post" onchange="this.form.submit()">
-                                <input type="text" name="user" class="form-control mb-2"
-                                    placeholder="ตัวย่อสาขา.ระดับชั้น.ห้อง">
-                            </form>
+                        <div class="mb-3 d-flex ms-auto">
+                            <button type="button" name="add" class="btn btn-success px-4" data-bs-toggle="modal"
+                                data-bs-target="#addFormModal"><i class="bi bi-plus-circle"></i></button>
                         </div>
                     </div>
                 </div>
@@ -92,18 +78,19 @@ if ($term >= 5 && $term <= 9) {
                         <div class="modal-content">
                             <!-- Form -->
                             <form action="" method="post" id="subjectFormInsert">
+                                <input type="hidden" name="userID" value="<?php echo $userid ?>">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="addFormModal">เพิ่มรายวิชา</h5>
+                                    <h5 class="modal-title">เพิ่มรายวิชา</h5>
                                 </div>
                                 <div class="modal-body">
                                     <div class="mb-3">
                                         <label for="">รหัสวิชา</label>
-                                        <input type="text" class="form-control" placeholder="กรอกรหัสวิชา" id="idSubj"
+                                        <input type="text" class="form-control" placeholder="กรอกรหัสวิชา" name="subjectID"
                                             required>
                                     </div>
                                     <div class="mb-3">
                                         <label for="">ชื่อวิชา</label>
-                                        <input type="text" class="form-control" placeholder="กรอกชื่อวิชา" id="nameSubj"
+                                        <input type="text" class="form-control" placeholder="กรอกชื่อวิชา" name="subjectName"
                                             required>
                                     </div>
                                     <div class="mb-3">
@@ -127,41 +114,14 @@ if ($term >= 5 && $term <= 9) {
                                             </div>
                                             <div class="col">
                                                 <label for="">ครูผู้สอนรายวิชา</label><br>
-                                                <select name="" id="teacherIN_Teacher"
+                                                <select name="teacherID" id="teacherIN_Teacher"
                                                     class="form-select teacherIN_Teacher">
 
                                                 </select>
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row">
-                                        <div class="text-center">
-                                            <h5 style="color: gray">---- เลือกห้องที่เรียน ----</h5>
-                                        </div>
-                                        <div class="col">
-                                            <div class="mb-3">
-                                                <label for="">เลือกสาขา</label>
-                                                <select name="" id="branch" class="form-select">
-                                                    <option value="" selected disabled>เลือกสาขา</option>
-                                                    <?php
-                                                    $sqlB = "SELECT id,name FROM branch WHERE name != 'สามัญสัมพันธ์'";
-                                                    $queryB = mysqli_query($conn, $sqlB);
-                                                    while ($row = mysqli_fetch_array($queryB)) {
-                                                        ?>
-                                                        <option value="<?php echo $row['id'] ?>"><?php echo $row['name'] ?>
-                                                        </option>
-                                                    <?php } ?>
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col">
-                                            <label for="">ห้อง</label>
-                                            <select name="" id="user" class="form-select">
-
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-success w-100" value="เพิ่ม">เพิ่ม</button>
+                                    <button type="submit" name="addSubject" class="btn btn-success w-100" value="เพิ่ม">เพิ่ม</button>
                                 </div>
                             </form>
                         </div>
@@ -175,18 +135,15 @@ if ($term >= 5 && $term <= 9) {
                     <th>รหัสวิชา</th>
                     <th>ชื่อวิชา</th>
                     <th>ครูผู้สอน</th>
-                    <th>ห้อง</th>
                     <th></th>
                 </tr>
                 <tr>
                     <?php
-                    if (isset($_GET['id'])) {
-                        while ($row = mysqli_fetch_array($query)) { ?>
+                        while ($row = mysqli_fetch_array($querySubject)) { ?>
 
-                            <td><?php echo $row['subID'] ?></td>
-                            <td><?php echo $row['name'] ?></td>
+                            <td><?php echo $row['subjectID'] ?></td>
+                            <td><?php echo $row['subjectName'] ?></td>
                             <td><?php echo $row['teacherName'] ?></td>
-                            <td><?php echo $row['username'] ?></td>
                             <td class="d-flex justify-content-around">
                                 <div>
                                     <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
@@ -201,19 +158,18 @@ if ($term >= 5 && $term <= 9) {
                                             <form action="./backend/editSubject.php" method="post" id="formSubjectEdit">
                                                 <div class="modal-header">
                                                     <h5 class="modal-title" id="editFormModal">แก้ไขรายวิชา</h5>
-
                                                 </div>
                                                 <div class="modal-body">
                                                     <input type="hidden" value="<?php echo $row['id'] ?>" name="id">
                                                     <div class="mb-3">
                                                         <label for="">รหัสวิชา</label>
                                                         <input type="text" name="subjectId" class="form-control"
-                                                            value="<?php echo $row['subID'] ?>" required>
+                                                            value="<?php echo $row['subjectID'] ?>" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <label for="">ชื่อวิชา</label>
                                                         <input type="text" name="subjectName" class="form-control"
-                                                            value="<?php echo $row['name'] ?>" required>
+                                                            value="<?php echo $row['subjectName'] ?>" required>
                                                     </div>
                                                     <div class="mb-3">
                                                         <div class="row">
@@ -244,34 +200,6 @@ if ($term >= 5 && $term <= 9) {
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div class="row">
-                                                        <div class="text-center">
-                                                            <h5 style="color: gray">---- เลือกห้องที่เรียน ----</h5>
-                                                        </div>
-                                                        <div class="col">
-                                                            <div class="mb-3">
-                                                                <label for="">เลือกสาขา</label>
-                                                                <select name="" id="branchEdit" class="form-select branchEdit">
-                                                                    <option value="" selected disabled>เลือกสาขา</option>
-                                                                    <?php
-                                                                    $sqlB_E = "SELECT id,name FROM branch WHERE name != 'สามัญสัมพันธ์'";
-                                                                    $queryB_E = mysqli_query($conn, $sqlB_E);
-                                                                    while ($rowB_E = mysqli_fetch_array($queryB_E)) {
-                                                                        ?>
-                                                                        <option value="<?php echo $rowB_E['id'] ?>">
-                                                                            <?php echo $rowB_E['name'] ?>
-                                                                        </option>
-                                                                    <?php } ?>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col">
-                                                            <label for="">ห้อง</label>
-                                                            <select name="userEdit" id="userEdit" class="form-select userEdit">
-
-                                                            </select>
-                                                        </div>
-                                                    </div>
                                                     <button type="submit" class="btn btn-warning w-100">แก้ไข</button>
                                                 </div>
                                             </form>
@@ -280,18 +208,14 @@ if ($term >= 5 && $term <= 9) {
                                 </div>
                                 <div class="ms-2">
                                     <form action="" method="post">
-                                        <input type="hidden" value="<?php echo $row['id'] ?>" name="subjectId">
+                                        <input type="hidden" value="<?php echo $row['id'] ?>" name="subjectID">
                                         <button class="btn btn-sm btn-danger" value="ลบ" type="submit"
                                             name="deleteSubject">ลบ</button>
                                     </form>
                                 </div>
                             </td>
                         </tr>
-                    <?php }
-                    } else { ?>
-                    <h5 class="text-center text-danger">กรุณาค้นหาผู้ใช้งาน สามารถดูรายชื่อผู้ใช้งานได้<a
-                            href="account.php">ที่นี่</a></h5>
-                <?php } ?>
+                    <?php } ?>
             </table>
         </div>
     </div>
@@ -304,41 +228,6 @@ if ($term >= 5 && $term <= 9) {
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-
-    $(document).on("submit", '#subjectFormInsert', function (e) {
-        e.preventDefault();
-        let subjectId = $('#idSubj').val();
-        let subjectName = $('#nameSubj').val();
-        let teacher = $('#teacherIN_Teacher').val();
-        let user = $('#user').val();
-
-        let formData = new FormData();
-        formData.append("subjectId", subjectId);
-        formData.append("subjectName", subjectName);
-        formData.append("teacher", teacher);
-        formData.append("user", user);
-
-        $.ajax({
-            url: "./backend/insertSubject.php",
-            type: "POST",
-            data: formData,
-            contentType: false,
-            processData: false,
-            dataType: "json",
-            success: function (alertS) {
-                Swal.fire({
-                    title: "เพิ่มสำเร็จ",
-                    icon: "success",
-                    timer: 1000,
-                    didOpen: () => Swal.showLoading()
-                }).then(() => {
-                    $('#addFormModal').modal('hide');
-                    location.reload();
-                })
-            }
-        })
-    })
-
     // fillter ครูจากสาขา form insert
     $(document).on('change', '#branchIN_Teacher', function () {
         let branchIN_Teacher = $(this).val();
@@ -408,23 +297,12 @@ if ($term >= 5 && $term <= 9) {
     }
 </script>
 <!-- PHP here -->
+<?php include './backend/action_subject.php' ?>
 <?php
 if (isset($_POST['deleteSubject'])) {
     $id = $_POST['subjectId'];
 
     $sql = "DELETE FROM subject WHERE id = $id";
     $query = mysqli_query($conn, $sql);
-}
-
-// alert delete all subject?
-var_dump($_POST);
-if (isset($_POST['deleteAllSubject'])) {
-    $sqlDeleteAllSubject = "DELETE FROM subject";
-    $queryDeleteAllSubject = mysqli_query($conn, $sqlDeleteAllSubject);
-    if ($queryDeleteAllSubject) {
-        echo '<script>alert("ลบสำเร็จ")</script>';
-    } else {
-        echo '<script>alert("เกิดข้อผิดพลาด")</script>';
-    }
 }
 ?>
