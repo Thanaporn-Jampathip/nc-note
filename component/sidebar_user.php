@@ -108,7 +108,7 @@ $rowNAV = mysqli_fetch_array($queryNav);
         </div>
         <div class="link mb-3">
             <a href="subject.php" class="<?= basename($_SERVER['PHP_SELF']) == 'subject.php' ? 'active' : '' ?>">
-                <ion-icon name="person-outline"></ion-icon>
+                <i class="bi bi-card-list"></i>
                 รายวิชา
             </a>
         </div>
